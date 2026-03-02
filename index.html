@@ -25,7 +25,7 @@
         }
 
         #main-box {
-            width: 800px;
+            width: 850px;
             background: var(--crimson);
             border: 3px solid var(--gold);
             box-shadow: 0 0 25px var(--gold-shadow);
@@ -35,50 +35,71 @@
             overflow-y: scroll;
         }
 
-        .top-nav { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 10px; }
+        /* Top Navigation */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
         .clickable-text:hover { opacity: 0.7; }
 
-        .auth-panel { 
-            display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.3); 
-            margin-bottom: 20px; text-align: center; animation: slideDown 0.4s ease-out;
+        /* Fingers Menu Button */
+        .fingers-toggle {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--gold);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+        /* Finger Selection Panel */
+        #fingers-menu {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+            border-bottom: 1px solid var(--gold);
+            margin-bottom: 20px;
+        }
 
+        .finger-btn {
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; border-radius: 4px; cursor: pointer; text-decoration: none;
+            transition: transform 0.1s;
+        }
+        .finger-btn:active { transform: scale(0.98); }
+        .finger-btn img { width: 30px; margin-right: 10px; }
+
+        .btn-index { background: black; color: #40E0D0; border: 2px solid #40E0D0; font-family: 'Courier New', monospace; }
+        .btn-middle { background: #2e004f; color: var(--gold); border: 2px solid var(--gold); font-family: 'Impact', sans-serif; text-transform: uppercase; }
+        .btn-ring { background: white; color: black; border: 2px solid black; font-family: Arial, sans-serif; }
+        .btn-pinky { background: #8fbc8f; color: #8b0000; border: 2px solid #8b0000; font-family: 'Arial Black', sans-serif; font-weight: bold; }
+
+        /* Forms and Inputs */
+        .auth-panel { display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.3); margin-bottom: 20px; text-align: center; }
         .formal-input { 
             background: var(--crimson); border: none; border-bottom: 1px solid var(--gold); 
             color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
-            outline: none; margin: 10px; width: 160px;
+            outline: none; margin: 10px; width: 180px;
         }
+        select.formal-input { border: 1px solid var(--gold); }
+        select.formal-input option { background: var(--crimson); color: var(--gold); }
 
-        select.formal-input { border: 1px solid var(--gold); cursor: pointer; }
-        select.formal-input option { background-color: var(--crimson); color: var(--gold); }
+        /* Management Styles */
+        .mgmt-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .mgmt-table td, .mgmt-table th { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,215,0,0.2); }
+        .action-group { display: flex; gap: 8px; }
+        .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; border: 1px solid var(--gold); padding: 4px 8px; }
 
+        /* Registry */
         .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
-        .motto { text-align: center; font-style: italic; font-size: 1.2rem; margin-top: 10px; line-height: 1.4; }
         .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
-
-        #search-input {
-            background: transparent; border: none; color: var(--gold);
-            font-style: italic; font-family: inherit; outline: none;
-            width: 250px; font-size: 1.1rem; margin-bottom: 20px;
-        }
-        #search-input::placeholder { color: var(--gold); opacity: 0.7; }
-
-        .mgmt-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .mgmt-table td, .mgmt-table th { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,215,0,0.2); }
+        #search-input { background: transparent; border: none; color: var(--gold); font-style: italic; font-family: inherit; outline: none; width: 280px; font-size: 1.1rem; margin-bottom: 20px; }
         
-        .action-group { display: flex; gap: 10px; }
-        .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; border: 1px solid var(--gold); padding: 3px 8px; }
-        .action-btn:hover { background: var(--gold); color: var(--crimson); }
-
-        .registry-entry { margin-bottom: 15px; font-size: 1.15rem; }
-        .entry-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; }
-        .details { display: none; padding: 20px 0; font-size: 1rem; border-top: 1px dashed rgba(255,215,0,0.2); margin-top: 10px; }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .history-line { display: block; font-size: 0.9rem; margin-top: 5px; opacity: 0.8; text-align: center; font-style: italic; }
+        .registry-entry { margin-bottom: 15px; }
+        .entry-header { display: flex; justify-content: space-between; cursor: pointer; padding: 5px; }
+        .details { display: none; padding: 15px; border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 5px; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .history-line { display: block; font-size: 0.85rem; font-style: italic; text-align: center; opacity: 0.7; }
         
         .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; }
     </style>
@@ -86,9 +107,17 @@
 <body>
 
 <div id="main-box">
-    <div class="top-nav" id="nav-triggers">
+    <div class="top-nav">
         <span class="clickable-text" id="signup-trigger">Sign up</span>
+        <div class="fingers-toggle" id="fingers-trigger">Fingers</div>
         <span class="clickable-text" id="login-trigger">Log in</span>
+    </div>
+
+    <div id="fingers-menu">
+        <div class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</div>
+        <div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div>
+        <div class="finger-btn btn-ring"><img src="TheRingIcon.png"> The Ring</div>
+        <div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div>
     </div>
 
     <div id="auth-area">
@@ -104,7 +133,7 @@
                 <option value="Pinky">Pinky</option>
                 <option value="Thumb">Thumb</option>
             </select>
-            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; height: 15px;"></div>
+            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; height: 15px; margin-top: 5px;"></div>
             <div class="bold-btn" id="doRegister">Register</div>
             <div class="clickable-text" onclick="closeAuth()">Cancel</div>
         </div>
@@ -117,7 +146,7 @@
         </div>
 
         <div id="mgmt-panel" class="auth-panel">
-            <h2 style="font-size: 1.2rem; border-bottom: 1px solid var(--gold); display: inline-block; padding-bottom: 5px; text-transform: uppercase;">Management</h2>
+            <h2 style="font-size: 1rem; text-transform: uppercase;">Management</h2>
             <table class="mgmt-table">
                 <thead><tr><th>Name</th><th>Rank</th><th>Actions</th></tr></thead>
                 <tbody id="mgmt-body"></tbody>
@@ -127,14 +156,14 @@
 
         <div id="user-info-panel" class="auth-panel">
             <div id="my-info-content"></div>
-            <div class="bold-btn" id="collapse-info-btn">Collapse Information</div>
+            <div class="bold-btn" onclick="closeAuth()">Collapse</div>
             <div class="bold-btn" id="doLogout" style="color:#ff4d4d;">Log out</div>
         </div>
     </div>
 
     <img src="TheThumbIcon.png" alt="Thumb" class="thumb-icon">
     <h1>The Thumb</h1>
-    <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
+    <div style="text-align: center; font-style: italic;">La vanità del Soldato, la gloria della famiglia.</div>
     <div class="gold-line"></div>
 
     <input type="text" id="search-input" placeholder="Search by Name, Rank, or Finger...">
@@ -158,35 +187,31 @@
     let currentUser = null;
     let allUsers = [];
 
-    // KEYWORD BASED WEIGHTING
+    // --- SECURITY & WEIGHT LOGIC ---
+
+    const strictSanitize = (str) => {
+        if (!str) return "";
+        return str.replace(/<[^>]*>?/gm, '').trim();
+    };
+
     const getWeight = (rankStr) => {
         if (!rankStr) return 0;
         const r = rankStr.toLowerCase();
-        
-        // Tier 5: Absolute Leaders
         if (r.includes("lord")) return 5;
-        
-        // Tier 4: High Council
         if (r.includes("great") || r.includes("sottocapo") || r.includes("maestro") || r.includes("messenger")) return 4;
-        
-        // Tier 3: The Stars (Pinky Core + Multi-finger variants)
-        // Checks if 'star' is present but 'aspiring' is not.
         if (r.includes("star") && !r.includes("aspiring")) return 3;
-        
-        // Tier 2: Officers
         if (r.includes("big") || r.includes("capo") || r.includes("docente") || r.includes("proxy")) return 2;
-        
-        // Tier 1: Initiates
         if (r.includes("aspiring") || r.includes("student") || r.includes("soldato") || r.includes("proselyte") || r.includes("little")) return 1;
-        
         return 0;
     };
 
-    const sanitize = (str) => {
+    const sanitizeDisplay = (str) => {
         const div = document.createElement('div');
         div.textContent = str || "";
         return div.innerHTML;
     };
+
+    // --- DATA HANDLING ---
 
     onValue(ref(db, 'users'), (snapshot) => {
         const data = snapshot.val();
@@ -195,7 +220,6 @@
         renderList();
         if (currentUser && data[currentUser.username]) {
             currentUser = { username: currentUser.username, ...data[currentUser.username] };
-            if (document.getElementById('mgmt-panel').style.display === 'block') loadManagement();
         }
     });
 
@@ -207,34 +231,24 @@
         const sorted = [...allUsers].sort((a, b) => getWeight(b.rank) - getWeight(a.rank) || a.display_name.localeCompare(b.display_name));
 
         sorted.forEach(u => {
-            const matches = u.display_name.toLowerCase().includes(filter) || 
-                            u.rank.toLowerCase().includes(filter) || 
-                            u.finger.toLowerCase().includes(filter);
-            
+            const matches = u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter) || u.finger.toLowerCase().includes(filter);
             if (filter && !matches) return;
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
             entry.innerHTML = `
                 <div class="entry-header">
-                    <span style="flex:1">${sanitize(u.display_name)}</span>
-                    <span style="flex:1; text-align:right; font-style:italic; margin-right:25px;">${sanitize(u.rank)} of the ${sanitize(u.finger)}</span>
-                    <span style="width:20px; text-align:right;">+</span>
+                    <span style="flex:1">${sanitizeDisplay(u.display_name)}</span>
+                    <span style="flex:1; text-align:right; font-style:italic;">${sanitizeDisplay(u.rank)} (${sanitizeDisplay(u.finger)})</span>
                 </div>
                 <div class="details">
-                    <div class="detail-row"><span>Organisation</span><span>${sanitize(u.finger)}</span></div>
-                    <div class="detail-row"><span>Rank</span><span>${sanitize(u.rank)}</span></div>
-                    <div style="margin-top:15px; text-align:center;">History:</div>
-                    ${(u.promotion_history || []).slice().reverse().map(h => `<span class="history-line">${sanitize(h)}</span>`).join('') || '<span style="display:block;text-align:center;opacity:0.5;">None</span>'}
+                    <div class="detail-row"><span>Organisation</span><span>${u.finger}</span></div>
+                    ${(u.promotion_history || []).slice().reverse().map(h => `<span class="history-line">${sanitizeDisplay(h)}</span>`).join('')}
                 </div>
             `;
             const h = entry.querySelector('.entry-header');
             const d = entry.querySelector('.details');
-            h.onclick = () => {
-                const vis = d.style.display === 'block';
-                d.style.display = vis ? 'none' : 'block';
-                h.querySelector('span:last-child').innerText = vis ? '+' : '-';
-            };
+            h.onclick = () => d.style.display = (d.style.display === 'block' ? 'none' : 'block');
             listDiv.appendChild(entry);
         });
     }
@@ -242,32 +256,24 @@
     window.loadManagement = () => {
         const body = document.getElementById('mgmt-body');
         body.innerHTML = "";
-        if (!currentUser) return;
-
         const myW = getWeight(currentUser.rank);
+
         allUsers.forEach(u => {
             const uW = getWeight(u.rank);
-            // Must be same finger AND strictly lower weight
             if (u.finger === currentUser.finger && uW < myW && u.username !== currentUser.username) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td><td id="act-${u.username}"></td>`;
+                row.innerHTML = `<td>${sanitizeDisplay(u.display_name)}</td><td>${sanitizeDisplay(u.rank)}</td><td class="action-group" id="act-${u.username}"></td>`;
                 body.appendChild(row);
                 
                 const cell = document.getElementById(`act-${u.username}`);
-                const actionGroup = document.createElement('div');
-                actionGroup.className = "action-group";
-
-                // Promote button (if not at Lord level 5)
-                if (uW < 5 && uW < (myW - 0)) { 
+                if (uW < 5 && uW < (myW - 0)) {
                     const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote";
-                    p.onclick = () => changeRank(u, 1); actionGroup.appendChild(p);
+                    p.onclick = () => changeRank(u, 1); cell.appendChild(p);
                 }
-                // Demote button (if not at lowest initiate level 1)
                 if (uW > 1) {
                     const d = document.createElement('span'); d.className="action-btn"; d.innerText="Demote"; d.style.color="#ff4d4d";
-                    d.onclick = () => changeRank(u, -1); actionGroup.appendChild(d);
+                    d.onclick = () => changeRank(u, -1); cell.appendChild(d);
                 }
-                cell.appendChild(actionGroup);
             }
         });
     };
@@ -275,117 +281,85 @@
     async function changeRank(user, dir) {
         const curW = getWeight(user.rank);
         const newW = curW + dir;
-        
-        // Predefined Rank Strings for conversion
         const rankMap = {
-            "Index": ["Proselyte", "Proxy", "Messenger"],
-            "Ring": ["Student", "Docente", "Maestro", "Lord"],
-            "Pinky": ["Aspiring Star", "Star"],
-            "Thumb": ["Soldato", "Capo", "Sottocapo"]
+            "Index": ["Proselyte", "Proxy", "", "Messenger"],
+            "Ring": ["Student", "Docente", "", "Maestro", "Lord"],
+            "Pinky": ["Aspiring Star", "", "Star"],
+            "Thumb": ["Soldato", "Capo", "", "Sottocapo"]
         };
 
-        let newBaseRank = "";
-
+        let newBase = "";
         if (user.finger === "Middle") {
             const gender = user.rank.toLowerCase().includes("sister") ? "Sister" : "Brother";
-            const tiers = ["", "Little", "Big", "Great"];
-            newBaseRank = tiers[newW] + " " + gender;
-        } else if (user.finger === "Pinky") {
-            newBaseRank = rankMap["Pinky"][newW - 1] || user.rank;
+            newBase = ["", "Little", "Big", "", "Great"][newW] + " " + gender;
         } else {
-            // Adjust index because some fingers have fewer than 5 tiers
-            const list = rankMap[user.finger];
-            // Maps weight to the appropriate list index
-            // e.g. For Index: Weight 1=Proselyte, 2=Proxy, 4=Messenger
-            if (user.finger === "Index") {
-                if (newW === 1) newBaseRank = "Proselyte";
-                if (newW === 2) newBaseRank = "Proxy";
-                if (newW === 4) newBaseRank = "Messenger";
-            } else if (user.finger === "Ring") {
-                if (newW === 1) newBaseRank = "Student";
-                if (newW === 2) newBaseRank = "Docente";
-                if (newW === 4) newBaseRank = "Maestro";
-                if (newW === 5) newBaseRank = "Lord";
-            } else if (user.finger === "Thumb") {
-                if (newW === 1) newBaseRank = "Soldato";
-                if (newW === 2) newBaseRank = "Capo";
-                if (newW === 4) newBaseRank = "Sottocapo";
-            }
+            newBase = rankMap[user.finger][newW - 1];
         }
 
-        // Handle the suffix preservation (e.g., " - District 24")
-        let finalRank = newBaseRank;
-        if (user.rank.includes(" - ")) {
-            const suffix = user.rank.split(" - ")[1];
-            finalRank = newBaseRank + " - " + suffix;
-        }
+        let finalRank = newBase;
+        if (user.rank.includes(" - ")) finalRank += " - " + user.rank.split(" - ")[1];
 
         const history = user.promotion_history || [];
-        history.push(`${dir > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${finalRank}`);
+        history.push(`${dir > 0 ? "Promoted" : "Demoted"} to ${finalRank}`);
         await update(ref(db, `users/${user.username}`), { rank: finalRank, promotion_history: history });
+        loadManagement();
     }
 
-    window.closeAuth = () => document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
+    // --- UI EVENTS ---
+
+    window.closeAuth = () => {
+        document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
+        document.getElementById('fingers-menu').style.display = 'none';
+    };
+
+    document.getElementById('fingers-trigger').onclick = () => {
+        const m = document.getElementById('fingers-menu');
+        m.style.display = (m.style.display === 'grid' ? 'none' : 'grid');
+    };
+
     document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display='block'; };
     document.getElementById('login-trigger').onclick = () => { if(currentUser) showProfile(); else { closeAuth(); document.getElementById('login-panel').style.display='block'; }};
 
     function showProfile() {
         closeAuth();
         const content = document.getElementById('my-info-content');
-        content.innerHTML = `<div style="font-size:1.5rem; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div>
-        <div class="detail-row" style="width:300px; margin:0 auto;"><span>Organisation</span><span>${sanitize(currentUser.finger)}</span></div>
-        <div class="detail-row" style="width:300px; margin:0 auto;"><span>Rank</span><span>${sanitize(currentUser.rank)}</span></div>`;
+        content.innerHTML = `<div style="font-size:1.2rem; margin-bottom:10px;">${sanitizeDisplay(currentUser.display_name)}</div>
+        <div>${currentUser.rank} of the ${currentUser.finger}</div>`;
         document.getElementById('user-info-panel').style.display = 'block';
     }
 
-    document.getElementById('doLogout').onclick = () => location.reload();
-
     document.getElementById('doLogin').onclick = async () => {
-        const un = document.getElementById('logUser').value.trim();
-        const pw = document.getElementById('logPass').value.trim();
+        const un = strictSanitize(document.getElementById('logUser').value);
+        const pw = document.getElementById('logPass').value;
         const snap = await get(ref(db, `users/${un}`));
         if (snap.exists() && snap.val().password === pw) {
             currentUser = { username: un, ...snap.val() };
             closeAuth();
-            document.getElementById('nav-triggers').innerHTML = `<span class="clickable-text" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</span><span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
-            document.getElementById('profile-btn').onclick = showProfile;
+            document.querySelector('.top-nav').innerHTML = `<span class="clickable-text" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</span><div class="fingers-toggle" onclick="const m=document.getElementById('fingers-menu'); m.style.display=(m.style.display==='grid'?'none':'grid');">Fingers</div><span class="clickable-text" onclick="showProfile()">Profile</span>`;
         } else alert("Invalid credentials.");
     };
 
     document.getElementById('doRegister').onclick = async () => {
-        const dn = document.getElementById('regDisplay').value.trim();
-        const un = document.getElementById('regUser').value.trim();
-        const pw = document.getElementById('regPass').value.trim();
+        const dn = strictSanitize(document.getElementById('regDisplay').value);
+        const un = strictSanitize(document.getElementById('regUser').value);
+        const pw = document.getElementById('regPass').value;
         const org = document.getElementById('regOrg').value;
         const err = document.getElementById('reg-error');
 
-        if (!dn || !un || !pw || !org) return;
+        if (!dn || !un || !pw || !org) { err.innerText = "All fields required."; return; }
+        if (allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase())) {
+            err.innerText = "Name already taken."; return;
+        }
 
-        const taken = allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase());
-        if (taken) { err.innerText = "Username or Display Name already exists."; return; }
-
-        let startR = "";
-        if (org === "Index") startR = "Proselyte";
-        else if (org === "Ring") startR = "Student";
-        else if (org === "Middle") startR = "Little Brother"; 
-        else if (org === "Pinky") startR = "Aspiring Star";
-        else if (org === "Thumb") startR = "Soldato";
-
-        await set(ref(db, `users/${un}`), { 
-            display_name: dn, password: pw, finger: org, rank: startR, 
-            promotion_history: [`Initial rank of ${startR}.`] 
-        });
-
-        document.getElementById('regDisplay').value = "";
-        document.getElementById('regUser').value = "";
-        document.getElementById('regPass').value = "";
-        document.getElementById('regOrg').selectedIndex = 0;
-        err.innerText = "";
+        const startR = {"Index":"Proselyte", "Ring":"Student", "Middle":"Little Brother", "Pinky":"Aspiring Star", "Thumb":"Soldato"}[org];
+        await set(ref(db, `users/${un}`), { display_name: dn, password: pw, finger: org, rank: startR, promotion_history: [`Joined as ${startR}`] });
         
-        alert("Account Created.");
-        closeAuth();
+        document.getElementById('regDisplay').value = ""; document.getElementById('regUser').value = "";
+        document.getElementById('regPass').value = ""; document.getElementById('regOrg').selectedIndex = 0;
+        alert("Account Created."); closeAuth();
     };
 
+    document.getElementById('doLogout').onclick = () => location.reload();
     document.getElementById('search-input').oninput = renderList;
 </script>
 </body>
