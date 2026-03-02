@@ -12,6 +12,7 @@
             --gold-shadow: rgba(255, 215, 0, 0.4);
         }
 
+        /* Hide scrollbars but keep functionality */
         * { scrollbar-width: none; -ms-overflow-style: none; }
         *::-webkit-scrollbar { display: none; }
 
@@ -104,9 +105,25 @@
 
         #search-input { background: transparent; border: none; color: var(--gold); font-style: italic; font-family: inherit; outline: none; width: 280px; font-size: 1.1rem; margin-bottom: 20px; }
         
+        /* Registry Entry Styling */
         .registry-entry { margin-bottom: 15px; border-bottom: 1px solid rgba(255,215,0,0.1); padding-bottom: 10px; }
-        .entry-header { display: flex; justify-content: space-between; cursor: pointer; }
+        .entry-header { display: flex; justify-content: space-between; cursor: pointer; align-items: center; }
+        .status-symbol { font-size: 1.2rem; font-weight: bold; margin-left: 10px; width: 20px; text-align: center; }
+        
         .details { display: none; padding: 15px; font-size: 0.9rem; }
+        
+        /* Field Layout Styling */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.05);
+            padding-bottom: 2px;
+        }
+        .detail-field-label { font-weight: bold; }
+
+        .history-title { text-align: center; margin: 15px 0 5px 0; text-decoration: underline; letter-spacing: 1px; }
+        .no-history { color: var(--gold); font-style: italic; text-align: center; margin: 10px 0; }
         
         .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; border: 1px solid var(--gold); padding: 5px 15px; }
         .action-btn { cursor: pointer; border: 1px solid var(--gold); padding: 3px 8px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; }
@@ -233,19 +250,49 @@
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
+            
+            // Format rank with "of the"
+            const formattedRank = `${u.rank} of the ${u.finger}`;
+
+            // Check history
+            let historyHtml = "";
+            if (!u.promotion_history || u.promotion_history.length === 0) {
+                historyHtml = `<div class="no-history">No promotion history</div>`;
+            } else {
+                historyHtml = u.promotion_history.slice().reverse().map(h => 
+                    `<div style="text-align:center; opacity:0.6; font-size:0.8rem;">${h}</div>`
+                ).join('');
+            }
+
             entry.innerHTML = `
                 <div class="entry-header">
-                    <span>${u.display_name}</span>
-                    <span style="font-style:italic; opacity:0.8;">${u.rank} (${u.finger})</span>
+                    <span style="flex-grow: 1;">${u.display_name}</span>
+                    <span style="font-style:italic; opacity:0.8;">${formattedRank}</span>
+                    <span class="status-symbol">+</span>
                 </div>
                 <div class="details">
-                    <div style="text-align:center;">History:</div>
-                    ${(u.promotion_history || []).slice().reverse().map(h => `<div style="text-align:center; opacity:0.6; font-size:0.8rem;">${h}</div>`).join('')}
+                    <div class="detail-row">
+                        <span class="detail-field-label">Name</span>
+                        <span>${u.display_name}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-field-label">Finger</span>
+                        <span>${u.finger}</span>
+                    </div>
+                    <div class="history-title">HISTORY</div>
+                    ${historyHtml}
                 </div>
             `;
+
             const h = entry.querySelector('.entry-header');
             const d = entry.querySelector('.details');
-            h.onclick = () => d.style.display = (d.style.display === 'block' ? 'none' : 'block');
+            const symbol = entry.querySelector('.status-symbol');
+
+            h.onclick = () => {
+                const isHidden = (d.style.display === 'none' || d.style.display === '');
+                d.style.display = isHidden ? 'block' : 'none';
+                symbol.innerText = isHidden ? '-' : '+';
+            };
             listDiv.appendChild(entry);
         });
     }
@@ -253,6 +300,8 @@
     window.loadManagement = () => {
         const body = document.getElementById('mgmt-body');
         body.innerHTML = "";
+        if (!currentUser) return;
+        
         const myW = getWeight(currentUser.rank);
 
         allUsers.forEach(u => {
@@ -305,6 +354,8 @@
     window.closeAuth = () => {
         document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
         document.getElementById('fingers-menu').style.display = 'none';
+        const authMenu = document.getElementById('fingers-menu-auth');
+        if(authMenu) authMenu.style.display = 'none';
     };
 
     document.getElementById('fingers-trigger').onclick = (e) => {
@@ -325,7 +376,7 @@
     function showProfile() {
         closeAuth();
         const content = document.getElementById('my-info-content');
-        content.innerHTML = `<div style="font-size:1.1rem; margin-bottom:5px;">${currentUser.display_name}</div><div>${currentUser.rank} (${currentUser.finger})</div>`;
+        content.innerHTML = `<div style="font-size:1.1rem; margin-bottom:5px;">${currentUser.display_name}</div><div>${currentUser.rank} of the ${currentUser.finger}</div>`;
         document.getElementById('user-info-panel').style.display = 'block';
     }
 
