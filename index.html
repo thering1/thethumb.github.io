@@ -12,6 +12,15 @@
             --gold-shadow: rgba(255, 215, 0, 0.4);
         }
 
+        /* a. Scrollbar Removal */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        *::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
         body {
             margin: 0; padding: 0;
             background: url('thethumbbackground.png') no-repeat center center fixed;
@@ -22,14 +31,14 @@
         }
 
         #main-box {
-            width: 700px;
+            width: 750px;
             background: var(--crimson);
             border: 3px solid var(--gold);
             box-shadow: 0 0 25px var(--gold-shadow);
             padding: 40px;
             position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-height: 85vh;
+            overflow-y: scroll; /* Still scrollable, just invisible */
         }
 
         .thumb-icon { width: 60px; display: block; margin: 0 auto 15px; }
@@ -39,32 +48,50 @@
         
         .gold-line { width: 85%; height: 1px; background: var(--gold); margin: 20px auto; opacity: 0.7; }
 
-        .top-nav { display: flex; justify-content: space-between; font-size: 0.85rem; font-style: italic; margin-bottom: 20px; }
-        .clickable-text { cursor: pointer; transition: opacity 0.2s; }
+        /* b. Swapped Locations */
+        .top-nav { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 20px; align-items: flex-start; }
+        .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
         .clickable-text:hover { opacity: 0.7; }
 
-        /* Inputs */
+        #search-input {
+            background: transparent; border: none; color: var(--gold);
+            font-style: italic; font-family: inherit; outline: none;
+            width: 150px; border-bottom: 1px solid transparent;
+        }
+        #search-input:focus { border-bottom: 1px solid var(--gold); }
+
         .formal-input { 
             background: transparent; border: none; border-bottom: 1px solid var(--gold); 
             color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
-            outline: none; margin-right: 15px;
+            outline: none; margin-bottom: 10px; width: 180px; display: inline-block;
         }
-        ::placeholder { color: var(--gold); opacity: 0.6; }
+        ::placeholder { color: var(--gold); opacity: 0.5; }
 
-        #register-section, #login-section { display: none; margin-bottom: 25px; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 15px; }
+        #auth-view { text-align: center; margin-bottom: 20px; }
+        #register-section, #login-section, #user-info-section { 
+            display: none; padding: 20px; border: 1px solid rgba(255,215,0,0.2); margin-top: 10px;
+        }
 
-        /* Registry Table */
-        #search-bar { width: 100%; margin-bottom: 15px; font-size: 1.1rem; }
+        /* Hierarchy Layout */
+        .registry-entry { margin-bottom: 12px; font-size: 1.1rem; }
+        .entry-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            cursor: pointer; width: 100%;
+        }
+        .name-part { flex: 1; text-align: left; }
+        .rank-part { flex: 1; text-align: right; margin-right: 20px; }
+        .toggle-part { width: 20px; text-align: right; }
+
+        .details { 
+            display: none; padding: 15px 40px; font-size: 0.95rem; 
+            border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 8px;
+        }
         
-        .registry-entry { margin-bottom: 10px; font-size: 1.1rem; }
-        .entry-header { display: flex; justify-content: space-between; cursor: pointer; }
-        .details { display: none; padding: 15px 0 15px 20px; font-size: 0.95rem; border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 5px; }
+        .history-line { display: block; font-size: 0.85rem; margin-top: 4px; opacity: 0.8; }
+        .no-history { text-align: center; font-style: italic; display: block; margin-top: 10px; }
         
-        .history-line { display: block; font-size: 0.85rem; margin-top: 4px; color: #ccc; }
-        
-        .error-msg { color: var(--gold); font-style: italic; font-size: 0.8rem; margin-top: 10px; display: block; }
-        
-        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; display: inline-block; }
+        .error-msg { color: var(--gold); font-style: italic; font-size: 0.8rem; margin: 10px 0; }
+        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 10px; display: inline-block; }
 
         select.formal-input { background: var(--crimson); }
     </style>
@@ -73,9 +100,11 @@
 
 <div id="main-box">
     <div class="top-nav">
-        <div id="search-trigger"><i>Search...</i></div>
         <div id="auth-links">
             <span class="clickable-text" id="login-trigger">Log in</span>
+        </div>
+        <div>
+            <input type="text" id="search-input" placeholder="Search...">
         </div>
     </div>
 
@@ -84,8 +113,8 @@
     <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
     <div class="gold-line"></div>
 
-    <div id="auth-area">
-        <div id="signup-trigger" class="clickable-text" style="text-align:center; font-style:italic; margin-bottom:10px;">Sign up</div>
+    <div id="auth-view">
+        <div id="signup-trigger" class="clickable-text">Sign up</div>
         
         <div id="register-section">
             <input type="text" id="regDisplay" placeholder="Display Name" class="formal-input">
@@ -108,12 +137,15 @@
             <input type="password" id="logPass" placeholder="Password" class="formal-input">
             <div class="bold-btn" id="doLogin">Enter</div>
         </div>
+
+        <div id="user-info-section">
+            <div id="my-info-content"></div>
+            <div class="clickable-text" id="collapse-info-btn" style="margin-top:15px; display:block;">Collapse Information</div>
+            <div class="clickable-text" id="doLogout" style="color:red; margin-top:10px; display:block;">Log out</div>
+        </div>
     </div>
 
-    <input type="text" id="search-bar" class="formal-input" placeholder="Search..." style="display:none;">
-
-    <div id="registry-list">
-        </div>
+    <div id="registry-list"></div>
 </div>
 
 <script type="module">
@@ -133,16 +165,20 @@
     let currentUser = null;
     let allUsers = [];
 
-    const RANK_WEIGHTS = {
-        "Lord": 4,
-        "Maestro": 3, "Great Sibling": 3, "Messenger": 3, "Sottocapo": 3, "Star of the Pinky": 3,
-        "Big Sibling": 2, "Proxy": 2, "Docente": 2, "Capo": 2,
-        "Little Sibling": 1, "Aspiring Star": 1, "Soldato": 1, "Student": 1, "Proselyte": 1
+    // c. Corrected Hierarchical Weighting
+    const getWeight = (rank) => {
+        const r = rank.toLowerCase();
+        if (r === "lord") return 5;
+        if (r.includes("great brother") || r.includes("great sister") || r === "sottocapo" || r === "maestro" || r === "messenger") return 4;
+        if (r.includes("star") && !r.includes("aspiring")) return 3;
+        if (r.includes("big brother") || r.includes("big sister") || r === "capo" || r === "docente" || r === "proxy") return 2;
+        if (r.includes("aspiring star") || r === "student" || r === "soldato" || r === "proselyte" || r.includes("little sister") || r.includes("little brother")) return 1;
+        return 0;
     };
 
     const STARTING_RANKS = {
-        "Ring": "Little Sibling",
-        "Middle": "Little Sibling",
+        "Ring": "Little Sister", // Defaulting to sister variant as example
+        "Middle": "Little Brother",
         "Index": "Proselyte",
         "Pinky": "Aspiring Star",
         "Thumb": "Soldato"
@@ -154,60 +190,58 @@
         return div.innerHTML;
     };
 
-    const validateName = (name) => {
-        // Allows letters (including non-latin), spaces, and brackets. No numbers/special chars.
-        const regex = /^[ \u00C0-\u017F\u0400-\u04FF\uAC00-\uD7AF\u4E00-\u9FFF\u3040-\u309Fa-zA-Z()\[\]]+$/;
-        return regex.test(name);
-    };
-
-    // --- RENDER REGISTRY ---
     onValue(ref(db, 'users'), (snapshot) => {
         const data = snapshot.val();
         allUsers = [];
-        for (let id in data) {
-            allUsers.push({ id, ...data[id] });
-        }
+        for (let id in data) allUsers.push({ id, ...data[id] });
         renderList();
     });
 
-    function renderList(filter = "") {
+    function renderList() {
+        const filter = document.getElementById('search-input').value.toLowerCase();
         const listDiv = document.getElementById('registry-list');
         listDiv.innerHTML = "";
 
-        // Sort by Rank Weight (Descending) then Alphabetical
         const sorted = allUsers.sort((a, b) => {
-            const weightA = RANK_WEIGHTS[a.rank] || 0;
-            const weightB = RANK_WEIGHTS[b.rank] || 0;
-            if (weightB !== weightA) return weightB - weightA;
+            const wa = getWeight(a.rank);
+            const wb = getWeight(b.rank);
+            if (wb !== wa) return wb - wa;
             return a.display_name.localeCompare(b.display_name);
         });
 
         sorted.forEach(u => {
-            if (filter && !u.display_name.toLowerCase().includes(filter.toLowerCase())) return;
+            const match = u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter);
+            if (filter && !match) return;
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
             
             const head = document.createElement('div');
             head.className = 'entry-header';
-            head.innerHTML = `<span>${sanitize(u.display_name)} | ${sanitize(u.rank)} of the ${sanitize(u.finger)}</span> <span class="toggle-btn">+</span>`;
+            head.innerHTML = `
+                <span class="name-part">${sanitize(u.display_name)}</span>
+                <span class="rank-part">${sanitize(u.rank)} of the ${sanitize(u.finger)}</span>
+                <span class="toggle-part">+</span>
+            `;
             
             const details = document.createElement('div');
             details.className = 'details';
             
-            const history = (u.promotion_history || []).map(h => `<span class="history-line">${sanitize(h)}</span>`).join('');
+            const historyHtml = (u.promotion_history && u.promotion_history.length > 0) 
+                ? u.promotion_history.map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
+                : `<span class="no-history">No promotion history</span>`;
 
             details.innerHTML = `
-                <div><b>"Organisation"</b> | ${sanitize(u.finger)}</div>
-                <div><b>"Rank"</b> | ${sanitize(u.rank)}</div>
-                <div style="margin-top:10px;"><b>"Promotion History:"</b></div>
-                ${history}
+                <div>Organisation | ${sanitize(u.finger)}</div>
+                <div>Rank | ${sanitize(u.rank)}</div>
+                <div style="margin-top:10px;">Promotion History:</div>
+                ${historyHtml}
             `;
 
             head.onclick = () => {
                 const isVisible = details.style.display === 'block';
                 details.style.display = isVisible ? 'none' : 'block';
-                head.querySelector('.toggle-btn').innerText = isVisible ? '+' : '-';
+                head.querySelector('.toggle-part').innerText = isVisible ? '+' : '-';
             };
 
             entry.appendChild(head);
@@ -216,15 +250,57 @@
         });
     }
 
-    // --- AUTH LOGIC ---
+    // --- USER PROFILE MODAL ---
+    function showProfile() {
+        const content = document.getElementById('my-info-content');
+        const historyHtml = (currentUser.promotion_history && currentUser.promotion_history.length > 0) 
+                ? currentUser.promotion_history.map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
+                : `<span class="no-history">No promotion history</span>`;
+
+        content.innerHTML = `
+            <div style="font-size:1.2rem; border-bottom:1px solid gold; padding-bottom:5px; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div>
+            <div>Organisation: ${sanitize(currentUser.finger)}</div>
+            <div>Rank: ${sanitize(currentUser.rank)}</div>
+            <div style="margin-top:10px; font-weight:bold;">Promotion History:</div>
+            ${historyHtml}
+        `;
+        document.getElementById('user-info-section').style.display = 'block';
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('register-section').style.display = 'none';
+    }
+
+    // --- LISTENERS ---
     document.getElementById('signup-trigger').onclick = () => {
-        const sec = document.getElementById('register-section');
-        sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        const s = document.getElementById('register-section');
+        s.style.display = s.style.display === 'block' ? 'none' : 'block';
     };
 
     document.getElementById('login-trigger').onclick = () => {
-        const sec = document.getElementById('login-section');
-        sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        if (currentUser) {
+            showProfile();
+        } else {
+            const s = document.getElementById('login-section');
+            s.style.display = s.style.display === 'block' ? 'none' : 'block';
+        }
+    };
+
+    document.getElementById('collapse-info-btn').onclick = () => {
+        document.getElementById('user-info-section').style.display = 'none';
+    };
+
+    document.getElementById('doLogout').onclick = () => location.reload();
+
+    document.getElementById('doLogin').onclick = async () => {
+        const un = document.getElementById('logUser').value.trim();
+        const pw = document.getElementById('logPass').value.trim();
+        const snap = await get(ref(db, `users/${un}`));
+        if (snap.exists() && snap.val().password === pw) {
+            currentUser = snap.val();
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-trigger').style.display = 'none';
+            document.getElementById('auth-links').innerHTML = `<span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
+            document.getElementById('profile-btn').onclick = showProfile;
+        } else alert("Denied.");
     };
 
     document.getElementById('doRegister').onclick = async () => {
@@ -233,70 +309,29 @@
         const pw = document.getElementById('regPass').value.trim();
         const org = document.getElementById('regOrg').value;
         const err = document.getElementById('reg-error');
+        const regex = /^[ \u00C0-\u017F\u0400-\u04FF\uAC00-\uD7AF\u4E00-\u9FFF\u3040-\u309Fa-zA-Z()\[\]]+$/;
 
         if (!dn || !un || !pw || !org) return;
-        if (!validateName(dn)) {
-            err.innerText = "Display Name contains forbidden characters.";
-            return;
+        if (!regex.test(dn)) { err.innerText = "Invalid characters in name."; return; }
+
+        const usersSnap = await get(ref(db, 'users'));
+        const users = usersSnap.val() || {};
+        for(let k in users) {
+            if(users[k].username === un) { err.innerText = `The ${un} username is taken.`; return; }
+            if(users[k].display_name === dn) { err.innerText = `The ${dn} display name is taken.`; return; }
         }
 
-        const snapshot = await get(ref(db, 'users'));
-        const users = snapshot.val() || {};
-        
-        for (let id in users) {
-            if (users[id].username === un) {
-                err.innerText = `The ${un} username is taken; use a different one.`;
-                return;
-            }
-            if (users[id].display_name === dn) {
-                err.innerText = `The ${dn} display name is taken; use a different one.`;
-                return;
-            }
-        }
-
-        const initialRank = STARTING_RANKS[org];
+        const startRank = STARTING_RANKS[org];
         const newUser = {
-            display_name: dn,
-            username: un,
-            password: pw,
-            finger: org,
-            rank: initialRank,
-            promotion_history: [`Initial rank of ${initialRank}.`]
+            display_name: dn, username: un, password: pw, finger: org, rank: startRank,
+            promotion_history: [`Initial rank of ${startRank}.`]
         };
-
         await set(ref(db, `users/${un}`), newUser);
-        
-        // Success: Clean up
-        document.getElementById('register-section').style.display = 'none';
-        document.getElementById('signup-trigger').style.display = 'none';
         currentUser = newUser;
-        document.getElementById('auth-links').innerHTML = `<span>Logged in as ${sanitize(dn)}</span>`;
+        location.reload(); // Refresh to clear and log in
     };
 
-    document.getElementById('doLogin').onclick = async () => {
-        const un = document.getElementById('logUser').value.trim();
-        const pw = document.getElementById('logPass').value.trim();
-        
-        const snap = await get(ref(db, `users/${un}`));
-        if (snap.exists() && snap.val().password === pw) {
-            currentUser = snap.val();
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('signup-trigger').style.display = 'none';
-            document.getElementById('auth-links').innerHTML = `<span>Logged in as ${sanitize(currentUser.display_name)}</span>`;
-        } else {
-            alert("Invalid Credentials.");
-        }
-    };
-
-    // --- SEARCH ---
-    document.getElementById('search-trigger').onclick = () => {
-        const bar = document.getElementById('search-bar');
-        bar.style.display = bar.style.display === 'block' ? 'none' : 'block';
-    };
-
-    document.getElementById('search-bar').oninput = (e) => {
-        renderList(e.target.value);
-    };
+    document.getElementById('search-input').oninput = renderList;
 
 </script>
 </body>
