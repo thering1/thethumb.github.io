@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Thumb</title>
+    <link rel="icon" type="image/png" href="TheThumbIcon.png">
+    <style>
+        :root {
+            --crimson: #4a0404;
+            --gold: #ffd700;
+            --gold-shadow: rgba(255, 215, 0, 0.4);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: url('thethumbbackground.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Times New Roman', serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; color: var(--gold);
+        }
+
+        #main-box {
+            width: 700px;
+            background: var(--crimson);
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 25px var(--gold-shadow);
+            padding: 40px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .thumb-icon { width: 60px; display: block; margin: 0 auto 15px; }
+        
+        h1 { text-align: center; font-size: 3rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
+        .motto { text-align: center; font-style: italic; font-size: 1.1rem; margin-top: 5px; line-height: 1.4; }
+        
+        .gold-line { width: 85%; height: 1px; background: var(--gold); margin: 20px auto; opacity: 0.7; }
+
+        .top-nav { display: flex; justify-content: space-between; font-size: 0.85rem; font-style: italic; margin-bottom: 20px; }
+        .clickable-text { cursor: pointer; transition: opacity 0.2s; }
+        .clickable-text:hover { opacity: 0.7; }
+
+        /* Inputs */
+        .formal-input { 
+            background: transparent; border: none; border-bottom: 1px solid var(--gold); 
+            color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
+            outline: none; margin-right: 15px;
+        }
+        ::placeholder { color: var(--gold); opacity: 0.6; }
+
+        #register-section, #login-section { display: none; margin-bottom: 25px; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 15px; }
+
+        /* Registry Table */
+        #search-bar { width: 100%; margin-bottom: 15px; font-size: 1.1rem; }
+        
+        .registry-entry { margin-bottom: 10px; font-size: 1.1rem; }
+        .entry-header { display: flex; justify-content: space-between; cursor: pointer; }
+        .details { display: none; padding: 15px 0 15px 20px; font-size: 0.95rem; border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 5px; }
+        
+        .history-line { display: block; font-size: 0.85rem; margin-top: 4px; color: #ccc; }
+        
+        .error-msg { color: var(--gold); font-style: italic; font-size: 0.8rem; margin-top: 10px; display: block; }
+        
+        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; display: inline-block; }
+
+        select.formal-input { background: var(--crimson); }
+    </style>
+</head>
+<body>
+
+<div id="main-box">
+    <div class="top-nav">
+        <div id="search-trigger"><i>Search...</i></div>
+        <div id="auth-links">
+            <span class="clickable-text" id="login-trigger">Log in</span>
+        </div>
+    </div>
+
+    <img src="TheThumbIcon.png" alt="Thumb" class="thumb-icon">
+    <h1>The Thumb</h1>
+    <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
+    <div class="gold-line"></div>
+
+    <div id="auth-area">
+        <div id="signup-trigger" class="clickable-text" style="text-align:center; font-style:italic; margin-bottom:10px;">Sign up</div>
+        
+        <div id="register-section">
+            <input type="text" id="regDisplay" placeholder="Display Name" class="formal-input">
+            <input type="text" id="regUser" placeholder="Username" class="formal-input">
+            <input type="password" id="regPass" placeholder="Password" class="formal-input">
+            <select id="regOrg" class="formal-input">
+                <option value="" disabled selected>Organisation</option>
+                <option value="Ring">Ring</option>
+                <option value="Middle">Middle</option>
+                <option value="Index">Index</option>
+                <option value="Pinky">Pinky</option>
+                <option value="Thumb">Thumb</option>
+            </select>
+            <div id="reg-error" class="error-msg"></div>
+            <div class="bold-btn" id="doRegister">Register</div>
+        </div>
+
+        <div id="login-section">
+            <input type="text" id="logUser" placeholder="Username" class="formal-input">
+            <input type="password" id="logPass" placeholder="Password" class="formal-input">
+            <div class="bold-btn" id="doLogin">Enter</div>
+        </div>
+    </div>
+
+    <input type="text" id="search-bar" class="formal-input" placeholder="Search..." style="display:none;">
+
+    <div id="registry-list">
+        </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const accountConfig = {
+        apiKey: "AIzaSyDHSXFPCiG2kjRAFzqUJn1OQoXD1bCtfH8",
+        authDomain: "account-data-54450.firebaseapp.com",
+        databaseURL: "https://account-data-54450-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "account-data-54450"
+    };
+
+    const app = initializeApp(accountConfig);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+    let allUsers = [];
+
+    const RANK_WEIGHTS = {
+        "Lord": 4,
+        "Maestro": 3, "Great Sibling": 3, "Messenger": 3, "Sottocapo": 3, "Star of the Pinky": 3,
+        "Big Sibling": 2, "Proxy": 2, "Docente": 2, "Capo": 2,
+        "Little Sibling": 1, "Aspiring Star": 1, "Soldato": 1, "Student": 1, "Proselyte": 1
+    };
+
+    const STARTING_RANKS = {
+        "Ring": "Little Sibling",
+        "Middle": "Little Sibling",
+        "Index": "Proselyte",
+        "Pinky": "Aspiring Star",
+        "Thumb": "Soldato"
+    };
+
+    const sanitize = (str) => {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    };
+
+    const validateName = (name) => {
+        // Allows letters (including non-latin), spaces, and brackets. No numbers/special chars.
+        const regex = /^[ \u00C0-\u017F\u0400-\u04FF\uAC00-\uD7AF\u4E00-\u9FFF\u3040-\u309Fa-zA-Z()\[\]]+$/;
+        return regex.test(name);
+    };
+
+    // --- RENDER REGISTRY ---
+    onValue(ref(db, 'users'), (snapshot) => {
+        const data = snapshot.val();
+        allUsers = [];
+        for (let id in data) {
+            allUsers.push({ id, ...data[id] });
+        }
+        renderList();
+    });
+
+    function renderList(filter = "") {
+        const listDiv = document.getElementById('registry-list');
+        listDiv.innerHTML = "";
+
+        // Sort by Rank Weight (Descending) then Alphabetical
+        const sorted = allUsers.sort((a, b) => {
+            const weightA = RANK_WEIGHTS[a.rank] || 0;
+            const weightB = RANK_WEIGHTS[b.rank] || 0;
+            if (weightB !== weightA) return weightB - weightA;
+            return a.display_name.localeCompare(b.display_name);
+        });
+
+        sorted.forEach(u => {
+            if (filter && !u.display_name.toLowerCase().includes(filter.toLowerCase())) return;
+
+            const entry = document.createElement('div');
+            entry.className = 'registry-entry';
+            
+            const head = document.createElement('div');
+            head.className = 'entry-header';
+            head.innerHTML = `<span>${sanitize(u.display_name)} | ${sanitize(u.rank)} of the ${sanitize(u.finger)}</span> <span class="toggle-btn">+</span>`;
+            
+            const details = document.createElement('div');
+            details.className = 'details';
+            
+            const history = (u.promotion_history || []).map(h => `<span class="history-line">${sanitize(h)}</span>`).join('');
+
+            details.innerHTML = `
+                <div><b>"Organisation"</b> | ${sanitize(u.finger)}</div>
+                <div><b>"Rank"</b> | ${sanitize(u.rank)}</div>
+                <div style="margin-top:10px;"><b>"Promotion History:"</b></div>
+                ${history}
+            `;
+
+            head.onclick = () => {
+                const isVisible = details.style.display === 'block';
+                details.style.display = isVisible ? 'none' : 'block';
+                head.querySelector('.toggle-btn').innerText = isVisible ? '+' : '-';
+            };
+
+            entry.appendChild(head);
+            entry.appendChild(details);
+            listDiv.appendChild(entry);
+        });
+    }
+
+    // --- AUTH LOGIC ---
+    document.getElementById('signup-trigger').onclick = () => {
+        const sec = document.getElementById('register-section');
+        sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+    };
+
+    document.getElementById('login-trigger').onclick = () => {
+        const sec = document.getElementById('login-section');
+        sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+    };
+
+    document.getElementById('doRegister').onclick = async () => {
+        const dn = document.getElementById('regDisplay').value.trim();
+        const un = document.getElementById('regUser').value.trim();
+        const pw = document.getElementById('regPass').value.trim();
+        const org = document.getElementById('regOrg').value;
+        const err = document.getElementById('reg-error');
+
+        if (!dn || !un || !pw || !org) return;
+        if (!validateName(dn)) {
+            err.innerText = "Display Name contains forbidden characters.";
+            return;
+        }
+
+        const snapshot = await get(ref(db, 'users'));
+        const users = snapshot.val() || {};
+        
+        for (let id in users) {
+            if (users[id].username === un) {
+                err.innerText = `The ${un} username is taken; use a different one.`;
+                return;
+            }
+            if (users[id].display_name === dn) {
+                err.innerText = `The ${dn} display name is taken; use a different one.`;
+                return;
+            }
+        }
+
+        const initialRank = STARTING_RANKS[org];
+        const newUser = {
+            display_name: dn,
+            username: un,
+            password: pw,
+            finger: org,
+            rank: initialRank,
+            promotion_history: [`Initial rank of ${initialRank}.`]
+        };
+
+        await set(ref(db, `users/${un}`), newUser);
+        
+        // Success: Clean up
+        document.getElementById('register-section').style.display = 'none';
+        document.getElementById('signup-trigger').style.display = 'none';
+        currentUser = newUser;
+        document.getElementById('auth-links').innerHTML = `<span>Logged in as ${sanitize(dn)}</span>`;
+    };
+
+    document.getElementById('doLogin').onclick = async () => {
+        const un = document.getElementById('logUser').value.trim();
+        const pw = document.getElementById('logPass').value.trim();
+        
+        const snap = await get(ref(db, `users/${un}`));
+        if (snap.exists() && snap.val().password === pw) {
+            currentUser = snap.val();
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-trigger').style.display = 'none';
+            document.getElementById('auth-links').innerHTML = `<span>Logged in as ${sanitize(currentUser.display_name)}</span>`;
+        } else {
+            alert("Invalid Credentials.");
+        }
+    };
+
+    // --- SEARCH ---
+    document.getElementById('search-trigger').onclick = () => {
+        const bar = document.getElementById('search-bar');
+        bar.style.display = bar.style.display === 'block' ? 'none' : 'block';
+    };
+
+    document.getElementById('search-bar').oninput = (e) => {
+        renderList(e.target.value);
+    };
+
+</script>
+</body>
+</html>
