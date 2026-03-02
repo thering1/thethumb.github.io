@@ -36,10 +36,12 @@
             overflow-y: scroll;
         }
 
+        /* Top Navigation */
         .top-nav { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 10px; }
         .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
         .clickable-text:hover { opacity: 0.7; }
 
+        /* Auth/Management Panels (Above Logo) */
         .auth-panel { 
             display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.3); 
             margin-bottom: 20px; text-align: center; animation: slideDown 0.4s ease-out;
@@ -53,6 +55,7 @@
             outline: none; margin: 10px; width: 160px;
         }
 
+        /* Logo and Motto */
         .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
         .motto { text-align: center; font-style: italic; font-size: 1.2rem; margin-top: 10px; line-height: 1.4; }
@@ -72,11 +75,13 @@
         .mgmt-table td, .mgmt-table th { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,215,0,0.2); }
         .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; border: 1px solid var(--gold); padding: 3px 8px; margin-right: 5px; }
 
+        /* Registry Items */
         .registry-entry { margin-bottom: 15px; font-size: 1.15rem; }
         .entry-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; }
         .name-part { flex: 1; text-align: left; }
         .rank-part { flex: 1; text-align: right; margin-right: 25px; font-style: italic; }
         
+        /* Expanded Details */
         .details { display: none; padding: 20px 0; font-size: 1rem; border-top: 1px dashed rgba(255,215,0,0.2); margin-top: 10px; }
         .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .history-line { display: block; font-size: 0.9rem; margin-top: 5px; opacity: 0.8; text-align: center; font-style: italic; }
@@ -119,7 +124,7 @@
         </div>
 
         <div id="mgmt-panel" class="auth-panel">
-            <h2 style="font-size: 1.2rem; border-bottom: 1px solid var(--gold); display: inline-block; padding-bottom: 5px;">Family Management</h2>
+            <h2 style="font-size: 1.2rem; border-bottom: 1px solid var(--gold); display: inline-block; padding-bottom: 5px; text-transform: uppercase;">Management</h2>
             <table class="mgmt-table">
                 <thead><tr><th>Name</th><th>Rank</th><th>Action</th></tr></thead>
                 <tbody id="mgmt-body"></tbody>
@@ -163,20 +168,24 @@
     let currentUser = null;
     let allUsers = [];
 
-    // The Tier Order (High to Low)
     const RANK_TIERS = [
         ["Lord"],
         ["Great Brother", "Great Sister", "Sottocapo", "Maestro", "Messenger"],
-        ["Star of the Pinky", "Star of the Middle", "Star of the Ring", "Star of the Index", "Star of the Thumb"],
+        ["Star"], // Logic handles "Star" presence
         ["Big Brother", "Big Sister", "Capo", "Docente", "Proxy"],
         ["Aspiring Star", "Student", "Soldato", "Proselyte", "Little Sister", "Little Brother"]
     ];
 
     const getWeight = (rank) => {
         if (!rank) return 0;
-        for (let i = 0; i < RANK_TIERS.length; i++) {
-            if (RANK_TIERS[i].some(r => rank.toLowerCase().includes(r.toLowerCase()))) return RANK_TIERS.length - i;
-        }
+        const rNorm = rank.toLowerCase();
+        
+        if (rNorm === "lord") return 5;
+        if (["great brother", "great sister", "sottocapo", "maestro", "messenger"].some(r => rNorm.includes(r))) return 4;
+        if (rNorm.includes("star") && !rNorm.includes("aspiring")) return 3;
+        if (["big brother", "big sister", "capo", "docente", "proxy"].some(r => rNorm.includes(r))) return 2;
+        if (["aspiring star", "student", "soldato", "proselyte", "little sister", "little brother"].some(r => rNorm.includes(r))) return 1;
+        
         return 0;
     };
 
@@ -191,7 +200,7 @@
         allUsers = [];
         for (let id in data) allUsers.push({ id, ...data[id] });
         renderList();
-        if (currentUser) {
+        if (currentUser && data[currentUser.username]) {
             currentUser = data[currentUser.username];
             if (document.getElementById('mgmt-panel').style.display === 'block') loadManagement();
         }
@@ -242,17 +251,16 @@
     function loadManagement() {
         const body = document.getElementById('mgmt-body');
         body.innerHTML = "";
+        if (!currentUser) return;
+
         const myWeight = getWeight(currentUser.rank);
         const myOrg = currentUser.finger;
 
         allUsers.forEach(u => {
             const uWeight = getWeight(u.rank);
-            // Management rule: Same organization AND lower rank
             if (u.finger === myOrg && uWeight < myWeight && u.username !== currentUser.username) {
                 const row = document.createElement('tr');
                 const actions = document.createElement('td');
-
-                // If gap > 1: Promote. If gap == 1: Demote.
                 const weightDiff = myWeight - uWeight;
 
                 if (weightDiff > 1) {
@@ -261,7 +269,6 @@
                     pBtn.onclick = () => changeRank(u, 1);
                     actions.appendChild(pBtn);
                 }
-                
                 if (weightDiff === 1 && uWeight > 1) {
                     const dBtn = document.createElement('span');
                     dBtn.className = "action-btn"; dBtn.innerText = "Demote";
@@ -269,7 +276,6 @@
                     dBtn.onclick = () => changeRank(u, -1);
                     actions.appendChild(dBtn);
                 }
-
                 row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td>`;
                 row.appendChild(actions);
                 body.appendChild(row);
@@ -278,34 +284,28 @@
     }
 
     async function changeRank(user, direction) {
-        let currentTierIndex = -1;
-        for (let i = 0; i < RANK_TIERS.length; i++) {
-            if (RANK_TIERS[i].includes(user.rank)) { currentTierIndex = i; break; }
-        }
-
+        let currentTierIndex = 5 - getWeight(user.rank);
         const newTierIndex = currentTierIndex - direction;
         if (newTierIndex < 0 || newTierIndex >= RANK_TIERS.length) return;
 
-        // Pick variant (e.g. if organization is Thumb, pick Soldato vs Little Brother)
         const targetRanks = RANK_TIERS[newTierIndex];
-        let newRank = targetRanks[0]; // fallback
-        // Match specific variant to organization context if possible
-        const orgMatch = targetRanks.find(r => {
-            if (user.finger === "Middle" && r.includes("Brother")) return true;
-            if (user.finger === "Thumb" && (r === "Soldato" || r === "Capo" || r === "Sottocapo")) return true;
-            if (user.finger === "Pinky" && r.includes("Star")) return true;
-            return false;
-        });
-        if (orgMatch) newRank = orgMatch;
+        let newRank = targetRanks[0];
+        const uLow = user.rank.toLowerCase();
+
+        if (newTierIndex === 2) { newRank = "Star"; }
+        else {
+            if (uLow.includes("sister")) newRank = targetRanks.find(r => r.includes("Sister")) || targetRanks[0];
+            else if (uLow.includes("brother")) newRank = targetRanks.find(r => r.includes("Brother")) || targetRanks[0];
+            else {
+                const map = { "Thumb": ["Soldato", "Capo", "Sottocapo"], "Index": ["Proselyte", "Proxy", "Messenger"] };
+                newRank = targetRanks.find(r => map[user.finger]?.includes(r)) || targetRanks[0];
+            }
+        }
 
         const history = user.promotion_history || [];
-        const action = direction > 0 ? "Promoted" : "Demoted";
-        history.push(`${action} from ${user.rank} to ${newRank}`);
-
-        await update(ref(db, `users/${user.username}`), {
-            rank: newRank,
-            promotion_history: history
-        });
+        history.push(`${direction > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${newRank}`);
+        await update(ref(db, `users/${user.username}`), { rank: newRank, promotion_history: history });
+        loadManagement();
     }
 
     window.closeAuth = () => document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
@@ -313,7 +313,7 @@
     document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
     document.getElementById('login-trigger').onclick = () => { 
         closeAuth(); 
-        if(currentUser) { showProfile(); }
+        if(currentUser) showProfile(); 
         else document.getElementById('login-panel').style.display = 'block'; 
     };
 
