@@ -12,7 +12,6 @@
             --gold-shadow: rgba(255, 215, 0, 0.4);
         }
 
-        /* Scrollbar Removal */
         * { scrollbar-width: none; -ms-overflow-style: none; }
         *::-webkit-scrollbar { display: none; }
 
@@ -58,11 +57,10 @@
         .motto { text-align: center; font-style: italic; font-size: 1.2rem; margin-top: 10px; line-height: 1.4; }
         .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
 
-        .search-container { margin-bottom: 20px; padding-left: 5px; }
         #search-input {
             background: transparent; border: none; color: var(--gold);
             font-style: italic; font-family: inherit; outline: none;
-            width: 200px; font-size: 1.1rem;
+            width: 200px; font-size: 1.1rem; margin-bottom: 20px;
         }
         #search-input::placeholder { color: var(--gold); opacity: 0.7; }
 
@@ -72,13 +70,9 @@
 
         .registry-entry { margin-bottom: 15px; font-size: 1.15rem; }
         .entry-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; }
-        .name-part { flex: 1; text-align: left; }
-        .rank-part { flex: 1; text-align: right; margin-right: 25px; font-style: italic; }
-        
         .details { display: none; padding: 20px 0; font-size: 1rem; border-top: 1px dashed rgba(255,215,0,0.2); margin-top: 10px; }
         .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .history-line { display: block; font-size: 0.9rem; margin-top: 5px; opacity: 0.8; text-align: center; font-style: italic; }
-        .no-history { text-align: center; font-style: italic; display: block; margin-top: 10px; opacity: 0.6; color: var(--gold); }
         
         .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; }
     </style>
@@ -98,13 +92,13 @@
             <input type="password" id="regPass" placeholder="Password" class="formal-input">
             <select id="regOrg" class="formal-input">
                 <option value="" disabled selected>Organisation</option>
+                <option value="Index">Index</option>
                 <option value="Ring">Ring</option>
                 <option value="Middle">Middle</option>
-                <option value="Index">Index</option>
                 <option value="Pinky">Pinky</option>
                 <option value="Thumb">Thumb</option>
             </select>
-            <div id="reg-error" style="color:var(--gold); font-size:0.8rem;"></div>
+            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; height: 15px;"></div>
             <div class="bold-btn" id="doRegister">Register</div>
             <div class="clickable-text" onclick="closeAuth()">Cancel</div>
         </div>
@@ -137,10 +131,7 @@
     <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
     <div class="gold-line"></div>
 
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search...">
-    </div>
-
+    <input type="text" id="search-input" placeholder="Search...">
     <div id="registry-list"></div>
 </div>
 
@@ -161,24 +152,27 @@
     let currentUser = null;
     let allUsers = [];
 
-    // Tiers (Weight 5 to 1)
-    const RANK_DEFS = [
-        { weight: 5, keywords: ["lord"] },
-        { weight: 4, keywords: ["great brother", "great sister", "sottocapo", "maestro", "messenger"] },
-        { weight: 3, keywords: ["star"], exclude: ["aspiring"] },
-        { weight: 2, keywords: ["big brother", "big sister", "capo", "docente", "proxy"] },
-        { weight: 1, keywords: ["aspiring star", "student", "soldato", "proselyte", "little sister", "little brother"] }
-    ];
+    // The Specific Hierarchies provided by the User
+    const ORG_RANKS = {
+        "Index": ["Proselyte", "Proxy", "Messenger"],
+        "Ring": ["Student", "Docente", "Maestro", "Lord"],
+        "Middle": ["Little Brother", "Little Sister", "Big Brother", "Big Sister", "Great Brother", "Great Sister"],
+        "Pinky": ["Aspiring Star", "Star"],
+        "Thumb": ["Soldato", "Capo", "Sottocapo"]
+    };
 
-    const getWeight = (rank) => {
-        if (!rank) return 0;
-        const r = rank.toLowerCase();
-        for (const def of RANK_DEFS) {
-            const hasKeyword = def.keywords.some(k => r.includes(k));
-            const isExcluded = def.exclude ? def.exclude.some(e => r.includes(e)) : false;
-            if (hasKeyword && !isExcluded) return def.weight;
+    // Mapping weights for sorting/logic
+    const getWeight = (rank, finger) => {
+        const list = ORG_RANKS[finger];
+        if (!list) return 0;
+        // Middle has paired ranks
+        if (finger === "Middle") {
+            if (rank.includes("Little")) return 1;
+            if (rank.includes("Big")) return 2;
+            if (rank.includes("Great")) return 3;
         }
-        return 0;
+        const idx = list.indexOf(rank);
+        return idx !== -1 ? idx + 1 : 0;
     };
 
     const sanitize = (str) => {
@@ -190,10 +184,10 @@
     onValue(ref(db, 'users'), (snapshot) => {
         const data = snapshot.val();
         allUsers = [];
-        for (let id in data) allUsers.push({ id, ...data[id] });
+        for (let id in data) allUsers.push({ username: id, ...data[id] });
         renderList();
-        if (currentUser) {
-            currentUser = data[currentUser.username];
+        if (currentUser && data[currentUser.username]) {
+            currentUser = { username: currentUser.username, ...data[currentUser.username] };
             if (document.getElementById('mgmt-panel').style.display === 'block') loadManagement();
         }
     });
@@ -203,143 +197,106 @@
         const listDiv = document.getElementById('registry-list');
         listDiv.innerHTML = "";
 
-        const sorted = allUsers.sort((a, b) => {
-            const wa = getWeight(a.rank);
-            const wb = getWeight(b.rank);
-            if (wb !== wa) return wb - wa;
-            return (a.display_name || "").localeCompare(b.display_name || "");
-        });
+        const sorted = [...allUsers].sort((a, b) => getWeight(b.rank, b.finger) - getWeight(a.rank, a.finger) || a.display_name.localeCompare(b.display_name));
 
         sorted.forEach(u => {
-            const match = (u.display_name || "").toLowerCase().includes(filter) || (u.rank || "").toLowerCase().includes(filter);
-            if (filter && !match) return;
+            if (filter && !(u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter))) return;
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
-            const head = document.createElement('div');
-            head.className = 'entry-header';
-            head.innerHTML = `<span class="name-part">${sanitize(u.display_name)}</span><span class="rank-part">${sanitize(u.rank)} of the ${sanitize(u.finger)}</span><span style="width:20px; text-align:right;">+</span>`;
-            
-            const details = document.createElement('div');
-            details.className = 'details';
-            const historyHtml = (u.promotion_history && u.promotion_history.length > 0) 
-                ? u.promotion_history.slice().reverse().map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
-                : `<span class="no-history">No promotion history</span>`;
-
-            details.innerHTML = `<div class="detail-row"><span>Organisation</span><span>${sanitize(u.finger)}</span></div><div class="detail-row"><span>Rank</span><span>${sanitize(u.rank)}</span></div><div style="margin-top:15px; text-align:center;">Promotion History:</div>${historyHtml}`;
-
-            head.onclick = () => {
-                const isVisible = details.style.display === 'block';
-                details.style.display = isVisible ? 'none' : 'block';
-                head.children[2].innerText = isVisible ? '+' : '-';
+            entry.innerHTML = `
+                <div class="entry-header">
+                    <span style="flex:1">${sanitize(u.display_name)}</span>
+                    <span style="flex:1; text-align:right; font-style:italic; margin-right:25px;">${sanitize(u.rank)} of the ${sanitize(u.finger)}</span>
+                    <span style="width:20px; text-align:right;">+</span>
+                </div>
+                <div class="details">
+                    <div class="detail-row"><span>Organisation</span><span>${sanitize(u.finger)}</span></div>
+                    <div class="detail-row"><span>Rank</span><span>${sanitize(u.rank)}</span></div>
+                    <div style="margin-top:15px; text-align:center;">History:</div>
+                    ${(u.promotion_history || []).slice().reverse().map(h => `<span class="history-line">${sanitize(h)}</span>`).join('') || '<span style="display:block;text-align:center;opacity:0.5;">None</span>'}
+                </div>
+            `;
+            const h = entry.querySelector('.entry-header');
+            const d = entry.querySelector('.details');
+            h.onclick = () => {
+                const vis = d.style.display === 'block';
+                d.style.display = vis ? 'none' : 'block';
+                h.querySelector('span:last-child').innerText = vis ? '+' : '-';
             };
-
-            entry.appendChild(head);
-            entry.appendChild(details);
             listDiv.appendChild(entry);
         });
     }
 
-    function loadManagement() {
+    window.loadManagement = () => {
         const body = document.getElementById('mgmt-body');
         body.innerHTML = "";
         if (!currentUser) return;
 
-        const myWeight = getWeight(currentUser.rank);
-        const myOrg = currentUser.finger;
-
+        const myW = getWeight(currentUser.rank, currentUser.finger);
         allUsers.forEach(u => {
-            const uWeight = getWeight(u.rank);
-            // Comparison logic: Same Finger AND strictly lower rank
-            if (u.finger === myOrg && uWeight < myWeight && u.username !== currentUser.username) {
+            const uW = getWeight(u.rank, u.finger);
+            if (u.finger === currentUser.finger && uW < myW && u.username !== currentUser.username) {
                 const row = document.createElement('tr');
-                const actions = document.createElement('td');
-                const weightDiff = myWeight - uWeight;
-
-                if (weightDiff > 1) {
-                    const pBtn = document.createElement('span');
-                    pBtn.className = "action-btn"; pBtn.innerText = "Promote";
-                    pBtn.onclick = () => changeRank(u, 1);
-                    actions.appendChild(pBtn);
-                }
-                if (weightDiff === 1 && uWeight > 1) {
-                    const dBtn = document.createElement('span');
-                    dBtn.className = "action-btn"; dBtn.innerText = "Demote";
-                    dBtn.style.color = "#ff4d4d";
-                    dBtn.onclick = () => changeRank(u, -1);
-                    actions.appendChild(dBtn);
-                }
-                row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td>`;
-                row.appendChild(actions);
+                row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td><td id="act-${u.username}"></td>`;
                 body.appendChild(row);
+                const cell = document.getElementById(`act-${u.username}`);
+                
+                if (myW - uW > 1) {
+                    const b = document.createElement('span'); b.className="action-btn"; b.innerText="Promote";
+                    b.onclick = () => changeRank(u, 1); cell.appendChild(b);
+                }
+                if (myW - uW === 1 && uW > 1) {
+                    const b = document.createElement('span'); b.className="action-btn"; b.innerText="Demote"; b.style.color="#ff4d4d";
+                    b.onclick = () => changeRank(u, -1); cell.appendChild(b);
+                }
             }
         });
-        if (body.innerHTML === "") body.innerHTML = "<tr><td colspan='3' style='text-align:center;'>No subordinates available.</td></tr>";
-    }
+    };
 
-    async function changeRank(user, direction) {
-        const currentWeight = getWeight(user.rank);
-        const newWeight = currentWeight + direction;
-        if (newWeight < 1 || newWeight > 5) return;
-
-        const targetDef = RANK_DEFS.find(d => d.weight === newWeight);
-        const uLow = user.rank.toLowerCase();
-        let newRank = targetDef.keywords[0]; // fallback
-
-        if (newWeight === 3) {
-            newRank = "Star";
+    async function changeRank(user, dir) {
+        const list = ORG_RANKS[user.finger];
+        const currentW = getWeight(user.rank, user.finger);
+        const newW = currentW + dir;
+        
+        let nr = "";
+        if (user.finger === "Middle") {
+            const gender = user.rank.includes("Sister") ? "Sister" : "Brother";
+            const tiers = ["", "Little", "Big", "Great"];
+            nr = tiers[newW] + " " + gender;
         } else {
-            // Sibling/Gender preservation
-            if (uLow.includes("sister")) {
-                newRank = targetDef.keywords.find(k => k.includes("sister")) || targetDef.keywords[0];
-            } else if (uLow.includes("brother")) {
-                newRank = targetDef.keywords.find(k => k.includes("brother")) || targetDef.keywords[0];
-            } else {
-                // Org specific naming
-                const map = { "Thumb": ["Soldato", "Capo", "Sottocapo"], "Index": ["Proselyte", "Proxy", "Messenger"] };
-                newRank = targetDef.keywords.find(k => map[user.finger]?.some(m => k.toLowerCase().includes(m.toLowerCase()))) || targetDef.keywords[0];
-            }
+            nr = list[newW - 1];
         }
 
-        // Capitalize for professionalism
-        newRank = newRank.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
         const history = user.promotion_history || [];
-        history.push(`${direction > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${newRank}`);
-        await update(ref(db, `users/${user.username}`), { rank: newRank, promotion_history: history });
+        history.push(`${dir > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${nr}`);
+        await update(ref(db, `users/${user.username}`), { rank: nr, promotion_history: history });
     }
 
     window.closeAuth = () => document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
-    document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
-    document.getElementById('login-trigger').onclick = () => { 
-        closeAuth(); 
-        if(currentUser) showProfile(); 
-        else document.getElementById('login-panel').style.display = 'block'; 
-    };
+    document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display='block'; };
+    document.getElementById('login-trigger').onclick = () => { if(currentUser) showProfile(); else { closeAuth(); document.getElementById('login-panel').style.display='block'; }};
 
     function showProfile() {
+        closeAuth();
         const content = document.getElementById('my-info-content');
-        const historyHtml = (currentUser.promotion_history && currentUser.promotion_history.length > 0) 
-            ? currentUser.promotion_history.slice().reverse().map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
-            : `<span class="no-history" style="text-align:center; font-style:italic; display:block; color:#ffd700;">No promotion history</span>`;
-
-        content.innerHTML = `<div style="font-size:1.5rem; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div><div class="detail-row" style="width:300px; margin:0 auto;"><span>Organisation</span><span>${sanitize(currentUser.finger)}</span></div><div class="detail-row" style="width:300px; margin:0 auto;"><span>Rank</span><span>${sanitize(currentUser.rank)}</span></div><div style="margin-top:10px; font-weight:bold;">Promotion History:</div>${historyHtml}`;
+        content.innerHTML = `<div style="font-size:1.5rem; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div>
+        <div class="detail-row" style="width:300px; margin:0 auto;"><span>Organisation</span><span>${sanitize(currentUser.finger)}</span></div>
+        <div class="detail-row" style="width:300px; margin:0 auto;"><span>Rank</span><span>${sanitize(currentUser.rank)}</span></div>`;
         document.getElementById('user-info-panel').style.display = 'block';
     }
 
-    document.getElementById('collapse-info-btn').onclick = closeAuth;
-    document.getElementById('doLogout').onclick = () => { currentUser = null; location.reload(); };
+    document.getElementById('doLogout').onclick = () => location.reload();
 
     document.getElementById('doLogin').onclick = async () => {
         const un = document.getElementById('logUser').value.trim();
         const pw = document.getElementById('logPass').value.trim();
         const snap = await get(ref(db, `users/${un}`));
         if (snap.exists() && snap.val().password === pw) {
-            currentUser = snap.val();
+            currentUser = { username: un, ...snap.val() };
             closeAuth();
-            document.getElementById('nav-triggers').innerHTML = `<span class="clickable-text" id="mgmt-trigger">Management</span><span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
-            document.getElementById('profile-btn').onclick = () => { closeAuth(); showProfile(); };
-            document.getElementById('mgmt-trigger').onclick = () => { closeAuth(); loadManagement(); document.getElementById('mgmt-panel').style.display = 'block'; };
+            document.getElementById('nav-triggers').innerHTML = `<span class="clickable-text" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</span><span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
+            document.getElementById('profile-btn').onclick = showProfile;
         } else alert("Invalid credentials.");
     };
 
@@ -349,10 +306,31 @@
         const pw = document.getElementById('regPass').value.trim();
         const org = document.getElementById('regOrg').value;
         const err = document.getElementById('reg-error');
+
         if (!dn || !un || !pw || !org) return;
-        const startRank = org === "Thumb" ? "Soldato" : org === "Pinky" ? "Aspiring Star" : org === "Index" ? "Proselyte" : (org === "Middle" ? "Little Brother" : "Little Sister");
-        await set(ref(db, `users/${un}`), { display_name: dn, username: un, password: pw, finger: org, rank: startRank, promotion_history: [`Initial rank of ${startRank}.`] });
-        location.reload();
+
+        // Check if Username or Display Name is taken
+        const taken = allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase());
+        if (taken) { err.innerText = "Username or Display Name already exists."; return; }
+
+        let startR = ORG_RANKS[org][0];
+        // Middle specific start
+        if (org === "Middle") startR = "Little Brother"; 
+
+        await set(ref(db, `users/${un}`), { 
+            display_name: dn, password: pw, finger: org, rank: startR, 
+            promotion_history: [`Initial rank of ${startR}.`] 
+        });
+
+        // Clear Fields
+        document.getElementById('regDisplay').value = "";
+        document.getElementById('regUser').value = "";
+        document.getElementById('regPass').value = "";
+        document.getElementById('regOrg').selectedIndex = 0;
+        err.innerText = "";
+        
+        alert("Account Created.");
+        closeAuth();
     };
 
     document.getElementById('search-input').oninput = renderList;
