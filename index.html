@@ -12,13 +12,12 @@
             --gold-shadow: rgba(255, 215, 0, 0.4);
         }
 
-        /* a. Scrollbar Removal */
         * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         *::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
+            display: none;
         }
 
         body {
@@ -31,92 +30,106 @@
         }
 
         #main-box {
-            width: 750px;
+            width: 800px;
             background: var(--crimson);
             border: 3px solid var(--gold);
             box-shadow: 0 0 25px var(--gold-shadow);
             padding: 40px;
             position: relative;
             max-height: 85vh;
-            overflow-y: scroll; /* Still scrollable, just invisible */
+            overflow-y: scroll;
+            transition: all 0.4s ease; /* Smooth shifting when fields appear */
         }
 
-        .thumb-icon { width: 60px; display: block; margin: 0 auto 15px; }
-        
-        h1 { text-align: center; font-size: 3rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
-        .motto { text-align: center; font-style: italic; font-size: 1.1rem; margin-top: 5px; line-height: 1.4; }
-        
-        .gold-line { width: 85%; height: 1px; background: var(--gold); margin: 20px auto; opacity: 0.7; }
-
-        /* b. Swapped Locations */
-        .top-nav { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 20px; align-items: flex-start; }
-        .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
-        .clickable-text:hover { opacity: 0.7; }
+        /* Top Nav Layout */
+        .top-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            align-items: center;
+        }
 
         #search-input {
             background: transparent; border: none; color: var(--gold);
             font-style: italic; font-family: inherit; outline: none;
-            width: 150px; border-bottom: 1px solid transparent;
+            width: 180px; border-bottom: 1px solid transparent;
+            transition: border-bottom 0.3s;
         }
         #search-input:focus { border-bottom: 1px solid var(--gold); }
+
+        .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
+        .clickable-text:hover { opacity: 0.7; }
+
+        /* Auth Sections (Appear above Logo) */
+        #auth-container { text-align: center; overflow: hidden; }
+        .auth-panel { 
+            display: none; 
+            padding: 20px 0; 
+            border-bottom: 1px solid rgba(255,215,0,0.3); 
+            margin-bottom: 20px; 
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .formal-input { 
             background: transparent; border: none; border-bottom: 1px solid var(--gold); 
             color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
-            outline: none; margin-bottom: 10px; width: 180px; display: inline-block;
-        }
-        ::placeholder { color: var(--gold); opacity: 0.5; }
-
-        #auth-view { text-align: center; margin-bottom: 20px; }
-        #register-section, #login-section, #user-info-section { 
-            display: none; padding: 20px; border: 1px solid rgba(255,215,0,0.2); margin-top: 10px;
+            outline: none; margin: 10px; width: 160px;
         }
 
-        /* Hierarchy Layout */
-        .registry-entry { margin-bottom: 12px; font-size: 1.1rem; }
+        /* Logo and Motto */
+        .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; } /* 3x Larger */
+        h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
+        .motto { text-align: center; font-style: italic; font-size: 1.2rem; margin-top: 10px; line-height: 1.4; }
+        .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
+
+        /* Registry Styling */
+        .registry-entry { margin-bottom: 15px; font-size: 1.15rem; border-bottom: 1px solid rgba(255,215,0,0.05); padding-bottom: 5px; }
         .entry-header { 
             display: flex; justify-content: space-between; align-items: center; 
             cursor: pointer; width: 100%;
         }
         .name-part { flex: 1; text-align: left; }
-        .rank-part { flex: 1; text-align: right; margin-right: 20px; }
-        .toggle-part { width: 20px; text-align: right; }
+        .rank-part { flex: 1; text-align: right; margin-right: 25px; font-style: italic; }
+        .toggle-part { width: 20px; text-align: right; font-family: monospace; }
 
+        /* Expanded Details Styling */
         .details { 
-            display: none; padding: 15px 40px; font-size: 0.95rem; 
-            border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 8px;
+            display: none; padding: 20px 0; font-size: 1rem; 
+            border-top: 1px dashed rgba(255,215,0,0.2); margin-top: 10px;
         }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         
-        .history-line { display: block; font-size: 0.85rem; margin-top: 4px; opacity: 0.8; }
-        .no-history { text-align: center; font-style: italic; display: block; margin-top: 10px; }
+        .history-section { margin-top: 15px; }
+        .history-line { display: block; font-size: 0.9rem; margin-top: 5px; opacity: 0.8; text-align: center; font-style: italic; }
+        .no-history { text-align: center; font-style: italic; display: block; margin-top: 10px; opacity: 0.6; }
         
-        .error-msg { color: var(--gold); font-style: italic; font-size: 0.8rem; margin: 10px 0; }
-        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 10px; display: inline-block; }
+        .error-msg { color: var(--gold); font-style: italic; font-size: 0.85rem; margin: 10px 0; }
+        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; letter-spacing: 1px; }
 
-        select.formal-input { background: var(--crimson); }
+        select.formal-input { background: var(--crimson); cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="main-box">
     <div class="top-nav">
-        <div id="auth-links">
-            <span class="clickable-text" id="login-trigger">Log in</span>
-        </div>
-        <div>
+        <div id="search-area">
             <input type="text" id="search-input" placeholder="Search...">
+        </div>
+        <div id="auth-links">
+            <span class="clickable-text" id="signup-trigger">Sign up</span> &nbsp;
+            <span class="clickable-text" id="login-trigger">Log in</span>
         </div>
     </div>
 
-    <img src="TheThumbIcon.png" alt="Thumb" class="thumb-icon">
-    <h1>The Thumb</h1>
-    <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
-    <div class="gold-line"></div>
-
-    <div id="auth-view">
-        <div id="signup-trigger" class="clickable-text">Sign up</div>
-        
-        <div id="register-section">
+    <div id="auth-container">
+        <div id="register-panel" class="auth-panel">
             <input type="text" id="regDisplay" placeholder="Display Name" class="formal-input">
             <input type="text" id="regUser" placeholder="Username" class="formal-input">
             <input type="password" id="regPass" placeholder="Password" class="formal-input">
@@ -130,27 +143,35 @@
             </select>
             <div id="reg-error" class="error-msg"></div>
             <div class="bold-btn" id="doRegister">Register</div>
+            <div class="clickable-text" onclick="closeAuth()">Cancel</div>
         </div>
 
-        <div id="login-section">
+        <div id="login-panel" class="auth-panel">
             <input type="text" id="logUser" placeholder="Username" class="formal-input">
             <input type="password" id="logPass" placeholder="Password" class="formal-input">
             <div class="bold-btn" id="doLogin">Enter</div>
+            <div class="clickable-text" onclick="closeAuth()">Cancel</div>
         </div>
 
-        <div id="user-info-section">
+        <div id="user-info-panel" class="auth-panel">
             <div id="my-info-content"></div>
-            <div class="clickable-text" id="collapse-info-btn" style="margin-top:15px; display:block;">Collapse Information</div>
-            <div class="clickable-text" id="doLogout" style="color:red; margin-top:10px; display:block;">Log out</div>
+            <div class="bold-btn" id="collapse-info-btn">Collapse Information</div>
+            <div class="bold-btn" id="doLogout" style="color:#ff4d4d;">Log out</div>
         </div>
     </div>
 
-    <div id="registry-list"></div>
+    <img src="TheThumbIcon.png" alt="Thumb" class="thumb-icon">
+    <h1>The Thumb</h1>
+    <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
+    <div class="gold-line"></div>
+
+    <div id="registry-list">
+        </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const accountConfig = {
         apiKey: "AIzaSyDHSXFPCiG2kjRAFzqUJn1OQoXD1bCtfH8",
@@ -165,23 +186,14 @@
     let currentUser = null;
     let allUsers = [];
 
-    // c. Corrected Hierarchical Weighting
     const getWeight = (rank) => {
         const r = rank.toLowerCase();
         if (r === "lord") return 5;
-        if (r.includes("great brother") || r.includes("great sister") || r === "sottocapo" || r === "maestro" || r === "messenger") return 4;
+        if (r.includes("great") || r === "sottocapo" || r === "maestro" || r === "messenger") return 4;
         if (r.includes("star") && !r.includes("aspiring")) return 3;
-        if (r.includes("big brother") || r.includes("big sister") || r === "capo" || r === "docente" || r === "proxy") return 2;
-        if (r.includes("aspiring star") || r === "student" || r === "soldato" || r === "proselyte" || r.includes("little sister") || r.includes("little brother")) return 1;
+        if (r.includes("big") || r === "capo" || r === "docente" || r === "proxy") return 2;
+        if (r.includes("aspiring") || r === "student" || r === "soldato" || r === "proselyte" || r.includes("little")) return 1;
         return 0;
-    };
-
-    const STARTING_RANKS = {
-        "Ring": "Little Sister", // Defaulting to sister variant as example
-        "Middle": "Little Brother",
-        "Index": "Proselyte",
-        "Pinky": "Aspiring Star",
-        "Thumb": "Soldato"
     };
 
     const sanitize = (str) => {
@@ -232,9 +244,9 @@
                 : `<span class="no-history">No promotion history</span>`;
 
             details.innerHTML = `
-                <div>Organisation | ${sanitize(u.finger)}</div>
-                <div>Rank | ${sanitize(u.rank)}</div>
-                <div style="margin-top:10px;">Promotion History:</div>
+                <div class="detail-row"><span>Organisation</span><span>${sanitize(u.finger)}</span></div>
+                <div class="detail-row"><span>Rank</span><span>${sanitize(u.rank)}</span></div>
+                <div style="margin-top:15px; text-align:center;">Promotion History:</div>
                 ${historyHtml}
             `;
 
@@ -250,45 +262,54 @@
         });
     }
 
-    // --- USER PROFILE MODAL ---
-    function showProfile() {
-        const content = document.getElementById('my-info-content');
-        const historyHtml = (currentUser.promotion_history && currentUser.promotion_history.length > 0) 
-                ? currentUser.promotion_history.map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
-                : `<span class="no-history">No promotion history</span>`;
+    // --- UI Controls ---
+    window.closeAuth = () => {
+        document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
+    };
 
-        content.innerHTML = `
-            <div style="font-size:1.2rem; border-bottom:1px solid gold; padding-bottom:5px; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div>
-            <div>Organisation: ${sanitize(currentUser.finger)}</div>
-            <div>Rank: ${sanitize(currentUser.rank)}</div>
-            <div style="margin-top:10px; font-weight:bold;">Promotion History:</div>
-            ${historyHtml}
-        `;
-        document.getElementById('user-info-section').style.display = 'block';
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('register-section').style.display = 'none';
-    }
-
-    // --- LISTENERS ---
     document.getElementById('signup-trigger').onclick = () => {
-        const s = document.getElementById('register-section');
-        s.style.display = s.style.display === 'block' ? 'none' : 'block';
+        closeAuth();
+        document.getElementById('register-panel').style.display = 'block';
     };
 
     document.getElementById('login-trigger').onclick = () => {
+        closeAuth();
         if (currentUser) {
             showProfile();
         } else {
-            const s = document.getElementById('login-section');
-            s.style.display = s.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('login-panel').style.display = 'block';
         }
     };
 
-    document.getElementById('collapse-info-btn').onclick = () => {
-        document.getElementById('user-info-section').style.display = 'none';
-    };
+    function showProfile() {
+        const content = document.getElementById('my-info-content');
+        const historyHtml = (currentUser.promotion_history && currentUser.promotion_history.length > 0) 
+            ? currentUser.promotion_history.map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
+            : `<span class="no-history">No promotion history</span>`;
 
-    document.getElementById('doLogout').onclick = () => location.reload();
+        content.innerHTML = `
+            <div style="font-size:1.5rem; margin-bottom:10px;">${sanitize(currentUser.display_name)}</div>
+            <div class="detail-row" style="width:300px; margin:0 auto;"><span>Organisation</span><span>${sanitize(currentUser.finger)}</span></div>
+            <div class="detail-row" style="width:300px; margin:0 auto;"><span>Rank</span><span>${sanitize(currentUser.rank)}</span></div>
+            <div style="margin-top:10px; font-weight:bold;">Promotion History:</div>
+            ${historyHtml}
+        `;
+        document.getElementById('user-info-panel').style.display = 'block';
+    }
+
+    document.getElementById('collapse-info-btn').onclick = closeAuth;
+
+    document.getElementById('doLogout').onclick = () => {
+        currentUser = null;
+        closeAuth();
+        document.getElementById('auth-links').innerHTML = `
+            <span class="clickable-text" id="signup-trigger-new">Sign up</span> &nbsp;
+            <span class="clickable-text" id="login-trigger-new">Log in</span>
+        `;
+        // Re-attach listeners to new elements
+        document.getElementById('signup-trigger-new').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
+        document.getElementById('login-trigger-new').onclick = () => { closeAuth(); document.getElementById('login-panel').style.display = 'block'; };
+    };
 
     document.getElementById('doLogin').onclick = async () => {
         const un = document.getElementById('logUser').value.trim();
@@ -296,11 +317,10 @@
         const snap = await get(ref(db, `users/${un}`));
         if (snap.exists() && snap.val().password === pw) {
             currentUser = snap.val();
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('signup-trigger').style.display = 'none';
+            closeAuth();
             document.getElementById('auth-links').innerHTML = `<span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
-            document.getElementById('profile-btn').onclick = showProfile;
-        } else alert("Denied.");
+            document.getElementById('profile-btn').onclick = () => { closeAuth(); showProfile(); };
+        } else alert("Access Denied.");
     };
 
     document.getElementById('doRegister').onclick = async () => {
@@ -321,14 +341,16 @@
             if(users[k].display_name === dn) { err.innerText = `The ${dn} display name is taken.`; return; }
         }
 
-        const startRank = STARTING_RANKS[org];
+        const startRank = org === "Thumb" ? "Soldato" : org === "Pinky" ? "Aspiring Star" : org === "Index" ? "Proselyte" : "Little Brother";
         const newUser = {
             display_name: dn, username: un, password: pw, finger: org, rank: startRank,
             promotion_history: [`Initial rank of ${startRank}.`]
         };
         await set(ref(db, `users/${un}`), newUser);
         currentUser = newUser;
-        location.reload(); // Refresh to clear and log in
+        closeAuth();
+        document.getElementById('auth-links').innerHTML = `<span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
+        document.getElementById('profile-btn').onclick = () => { closeAuth(); showProfile(); };
     };
 
     document.getElementById('search-input').oninput = renderList;
