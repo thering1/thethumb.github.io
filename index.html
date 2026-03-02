@@ -47,9 +47,19 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
         .formal-input { 
-            background: transparent; border: none; border-bottom: 1px solid var(--gold); 
+            background: var(--crimson); border: none; border-bottom: 1px solid var(--gold); 
             color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
             outline: none; margin: 10px; width: 160px;
+        }
+
+        /* Dropdown Styling */
+        select.formal-input {
+            border: 1px solid var(--gold);
+            cursor: pointer;
+        }
+        select.formal-input option {
+            background-color: var(--crimson);
+            color: var(--gold);
         }
 
         .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
@@ -60,13 +70,16 @@
         #search-input {
             background: transparent; border: none; color: var(--gold);
             font-style: italic; font-family: inherit; outline: none;
-            width: 200px; font-size: 1.1rem; margin-bottom: 20px;
+            width: 250px; font-size: 1.1rem; margin-bottom: 20px;
         }
         #search-input::placeholder { color: var(--gold); opacity: 0.7; }
 
         .mgmt-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
         .mgmt-table td, .mgmt-table th { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,215,0,0.2); }
-        .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; border: 1px solid var(--gold); padding: 3px 8px; margin-right: 5px; }
+        
+        .action-group { display: flex; gap: 10px; }
+        .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; border: 1px solid var(--gold); padding: 3px 8px; }
+        .action-btn:hover { background: var(--gold); color: var(--crimson); }
 
         .registry-entry { margin-bottom: 15px; font-size: 1.15rem; }
         .entry-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; }
@@ -113,7 +126,7 @@
         <div id="mgmt-panel" class="auth-panel">
             <h2 style="font-size: 1.2rem; border-bottom: 1px solid var(--gold); display: inline-block; padding-bottom: 5px; text-transform: uppercase;">Management</h2>
             <table class="mgmt-table">
-                <thead><tr><th>Name</th><th>Rank</th><th>Action</th></tr></thead>
+                <thead><tr><th>Name</th><th>Rank</th><th>Actions</th></tr></thead>
                 <tbody id="mgmt-body"></tbody>
             </table>
             <div class="bold-btn" onclick="closeAuth()">Close</div>
@@ -131,7 +144,7 @@
     <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
     <div class="gold-line"></div>
 
-    <input type="text" id="search-input" placeholder="Search...">
+    <input type="text" id="search-input" placeholder="Search by Name, Rank, or Finger...">
     <div id="registry-list"></div>
 </div>
 
@@ -152,7 +165,6 @@
     let currentUser = null;
     let allUsers = [];
 
-    // The Specific Hierarchies provided by the User
     const ORG_RANKS = {
         "Index": ["Proselyte", "Proxy", "Messenger"],
         "Ring": ["Student", "Docente", "Maestro", "Lord"],
@@ -161,11 +173,9 @@
         "Thumb": ["Soldato", "Capo", "Sottocapo"]
     };
 
-    // Mapping weights for sorting/logic
     const getWeight = (rank, finger) => {
         const list = ORG_RANKS[finger];
         if (!list) return 0;
-        // Middle has paired ranks
         if (finger === "Middle") {
             if (rank.includes("Little")) return 1;
             if (rank.includes("Big")) return 2;
@@ -200,7 +210,11 @@
         const sorted = [...allUsers].sort((a, b) => getWeight(b.rank, b.finger) - getWeight(a.rank, a.finger) || a.display_name.localeCompare(b.display_name));
 
         sorted.forEach(u => {
-            if (filter && !(u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter))) return;
+            const matches = u.display_name.toLowerCase().includes(filter) || 
+                            u.rank.toLowerCase().includes(filter) || 
+                            u.finger.toLowerCase().includes(filter);
+            
+            if (filter && !matches) return;
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
@@ -240,16 +254,25 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td><td id="act-${u.username}"></td>`;
                 body.appendChild(row);
-                const cell = document.getElementById(`act-${u.username}`);
                 
-                if (myW - uW > 1) {
-                    const b = document.createElement('span'); b.className="action-btn"; b.innerText="Promote";
-                    b.onclick = () => changeRank(u, 1); cell.appendChild(b);
+                const cell = document.getElementById(`act-${u.username}`);
+                const actionGroup = document.createElement('div');
+                actionGroup.className = "action-group";
+
+                // PROMOTE logic (Gap >= 1)
+                const maxWeight = ORG_RANKS[u.finger].length;
+                if (uW < maxWeight && uW < (myW - 0)) { 
+                    const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote";
+                    p.onclick = () => changeRank(u, 1); actionGroup.appendChild(p);
                 }
-                if (myW - uW === 1 && uW > 1) {
-                    const b = document.createElement('span'); b.className="action-btn"; b.innerText="Demote"; b.style.color="#ff4d4d";
-                    b.onclick = () => changeRank(u, -1); cell.appendChild(b);
+
+                // DEMOTE logic (Only if not at lowest rank)
+                if (uW > 1) {
+                    const d = document.createElement('span'); d.className="action-btn"; d.innerText="Demote"; d.style.color="#ff4d4d";
+                    d.onclick = () => changeRank(u, -1); actionGroup.appendChild(d);
                 }
+
+                cell.appendChild(actionGroup);
             }
         });
     };
@@ -309,12 +332,10 @@
 
         if (!dn || !un || !pw || !org) return;
 
-        // Check if Username or Display Name is taken
         const taken = allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase());
         if (taken) { err.innerText = "Username or Display Name already exists."; return; }
 
         let startR = ORG_RANKS[org][0];
-        // Middle specific start
         if (org === "Middle") startR = "Little Brother"; 
 
         await set(ref(db, `users/${un}`), { 
@@ -322,7 +343,6 @@
             promotion_history: [`Initial rank of ${startR}.`] 
         });
 
-        // Clear Fields
         document.getElementById('regDisplay').value = "";
         document.getElementById('regUser').value = "";
         document.getElementById('regPass').value = "";
