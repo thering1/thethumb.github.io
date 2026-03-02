@@ -52,15 +52,8 @@
             outline: none; margin: 10px; width: 160px;
         }
 
-        /* Dropdown Styling */
-        select.formal-input {
-            border: 1px solid var(--gold);
-            cursor: pointer;
-        }
-        select.formal-input option {
-            background-color: var(--crimson);
-            color: var(--gold);
-        }
+        select.formal-input { border: 1px solid var(--gold); cursor: pointer; }
+        select.formal-input option { background-color: var(--crimson); color: var(--gold); }
 
         .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
@@ -165,24 +158,28 @@
     let currentUser = null;
     let allUsers = [];
 
-    const ORG_RANKS = {
-        "Index": ["Proselyte", "Proxy", "Messenger"],
-        "Ring": ["Student", "Docente", "Maestro", "Lord"],
-        "Middle": ["Little Brother", "Little Sister", "Big Brother", "Big Sister", "Great Brother", "Great Sister"],
-        "Pinky": ["Aspiring Star", "Star"],
-        "Thumb": ["Soldato", "Capo", "Sottocapo"]
-    };
-
-    const getWeight = (rank, finger) => {
-        const list = ORG_RANKS[finger];
-        if (!list) return 0;
-        if (finger === "Middle") {
-            if (rank.includes("Little")) return 1;
-            if (rank.includes("Big")) return 2;
-            if (rank.includes("Great")) return 3;
-        }
-        const idx = list.indexOf(rank);
-        return idx !== -1 ? idx + 1 : 0;
+    // KEYWORD BASED WEIGHTING
+    const getWeight = (rankStr) => {
+        if (!rankStr) return 0;
+        const r = rankStr.toLowerCase();
+        
+        // Tier 5: Absolute Leaders
+        if (r.includes("lord")) return 5;
+        
+        // Tier 4: High Council
+        if (r.includes("great") || r.includes("sottocapo") || r.includes("maestro") || r.includes("messenger")) return 4;
+        
+        // Tier 3: The Stars (Pinky Core + Multi-finger variants)
+        // Checks if 'star' is present but 'aspiring' is not.
+        if (r.includes("star") && !r.includes("aspiring")) return 3;
+        
+        // Tier 2: Officers
+        if (r.includes("big") || r.includes("capo") || r.includes("docente") || r.includes("proxy")) return 2;
+        
+        // Tier 1: Initiates
+        if (r.includes("aspiring") || r.includes("student") || r.includes("soldato") || r.includes("proselyte") || r.includes("little")) return 1;
+        
+        return 0;
     };
 
     const sanitize = (str) => {
@@ -207,7 +204,7 @@
         const listDiv = document.getElementById('registry-list');
         listDiv.innerHTML = "";
 
-        const sorted = [...allUsers].sort((a, b) => getWeight(b.rank, b.finger) - getWeight(a.rank, a.finger) || a.display_name.localeCompare(b.display_name));
+        const sorted = [...allUsers].sort((a, b) => getWeight(b.rank) - getWeight(a.rank) || a.display_name.localeCompare(b.display_name));
 
         sorted.forEach(u => {
             const matches = u.display_name.toLowerCase().includes(filter) || 
@@ -247,9 +244,10 @@
         body.innerHTML = "";
         if (!currentUser) return;
 
-        const myW = getWeight(currentUser.rank, currentUser.finger);
+        const myW = getWeight(currentUser.rank);
         allUsers.forEach(u => {
-            const uW = getWeight(u.rank, u.finger);
+            const uW = getWeight(u.rank);
+            // Must be same finger AND strictly lower weight
             if (u.finger === currentUser.finger && uW < myW && u.username !== currentUser.username) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td>${sanitize(u.display_name)}</td><td>${sanitize(u.rank)}</td><td id="act-${u.username}"></td>`;
@@ -259,41 +257,72 @@
                 const actionGroup = document.createElement('div');
                 actionGroup.className = "action-group";
 
-                // PROMOTE logic (Gap >= 1)
-                const maxWeight = ORG_RANKS[u.finger].length;
-                if (uW < maxWeight && uW < (myW - 0)) { 
+                // Promote button (if not at Lord level 5)
+                if (uW < 5 && uW < (myW - 0)) { 
                     const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote";
                     p.onclick = () => changeRank(u, 1); actionGroup.appendChild(p);
                 }
-
-                // DEMOTE logic (Only if not at lowest rank)
+                // Demote button (if not at lowest initiate level 1)
                 if (uW > 1) {
                     const d = document.createElement('span'); d.className="action-btn"; d.innerText="Demote"; d.style.color="#ff4d4d";
                     d.onclick = () => changeRank(u, -1); actionGroup.appendChild(d);
                 }
-
                 cell.appendChild(actionGroup);
             }
         });
     };
 
     async function changeRank(user, dir) {
-        const list = ORG_RANKS[user.finger];
-        const currentW = getWeight(user.rank, user.finger);
-        const newW = currentW + dir;
+        const curW = getWeight(user.rank);
+        const newW = curW + dir;
         
-        let nr = "";
+        // Predefined Rank Strings for conversion
+        const rankMap = {
+            "Index": ["Proselyte", "Proxy", "Messenger"],
+            "Ring": ["Student", "Docente", "Maestro", "Lord"],
+            "Pinky": ["Aspiring Star", "Star"],
+            "Thumb": ["Soldato", "Capo", "Sottocapo"]
+        };
+
+        let newBaseRank = "";
+
         if (user.finger === "Middle") {
-            const gender = user.rank.includes("Sister") ? "Sister" : "Brother";
+            const gender = user.rank.toLowerCase().includes("sister") ? "Sister" : "Brother";
             const tiers = ["", "Little", "Big", "Great"];
-            nr = tiers[newW] + " " + gender;
+            newBaseRank = tiers[newW] + " " + gender;
+        } else if (user.finger === "Pinky") {
+            newBaseRank = rankMap["Pinky"][newW - 1] || user.rank;
         } else {
-            nr = list[newW - 1];
+            // Adjust index because some fingers have fewer than 5 tiers
+            const list = rankMap[user.finger];
+            // Maps weight to the appropriate list index
+            // e.g. For Index: Weight 1=Proselyte, 2=Proxy, 4=Messenger
+            if (user.finger === "Index") {
+                if (newW === 1) newBaseRank = "Proselyte";
+                if (newW === 2) newBaseRank = "Proxy";
+                if (newW === 4) newBaseRank = "Messenger";
+            } else if (user.finger === "Ring") {
+                if (newW === 1) newBaseRank = "Student";
+                if (newW === 2) newBaseRank = "Docente";
+                if (newW === 4) newBaseRank = "Maestro";
+                if (newW === 5) newBaseRank = "Lord";
+            } else if (user.finger === "Thumb") {
+                if (newW === 1) newBaseRank = "Soldato";
+                if (newW === 2) newBaseRank = "Capo";
+                if (newW === 4) newBaseRank = "Sottocapo";
+            }
+        }
+
+        // Handle the suffix preservation (e.g., " - District 24")
+        let finalRank = newBaseRank;
+        if (user.rank.includes(" - ")) {
+            const suffix = user.rank.split(" - ")[1];
+            finalRank = newBaseRank + " - " + suffix;
         }
 
         const history = user.promotion_history || [];
-        history.push(`${dir > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${nr}`);
-        await update(ref(db, `users/${user.username}`), { rank: nr, promotion_history: history });
+        history.push(`${dir > 0 ? "Promoted" : "Demoted"} from ${user.rank} to ${finalRank}`);
+        await update(ref(db, `users/${user.username}`), { rank: finalRank, promotion_history: history });
     }
 
     window.closeAuth = () => document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
@@ -335,8 +364,12 @@
         const taken = allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase());
         if (taken) { err.innerText = "Username or Display Name already exists."; return; }
 
-        let startR = ORG_RANKS[org][0];
-        if (org === "Middle") startR = "Little Brother"; 
+        let startR = "";
+        if (org === "Index") startR = "Proselyte";
+        else if (org === "Ring") startR = "Student";
+        else if (org === "Middle") startR = "Little Brother"; 
+        else if (org === "Pinky") startR = "Aspiring Star";
+        else if (org === "Thumb") startR = "Soldato";
 
         await set(ref(db, `users/${un}`), { 
             display_name: dn, password: pw, finger: org, rank: startR, 
