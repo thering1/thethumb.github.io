@@ -12,13 +12,9 @@
             --gold-shadow: rgba(255, 215, 0, 0.4);
         }
 
-        * {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        *::-webkit-scrollbar {
-            display: none;
-        }
+        /* Scrollbar Removal */
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; }
 
         body {
             margin: 0; padding: 0;
@@ -38,41 +34,32 @@
             position: relative;
             max-height: 85vh;
             overflow-y: scroll;
-            transition: all 0.4s ease; /* Smooth shifting when fields appear */
         }
 
-        /* Top Nav Layout */
+        /* Top Navigation: Sign Up (Left) | Log In (Right) */
         .top-nav { 
             display: flex; 
             justify-content: space-between; 
-            font-size: 0.9rem; 
-            margin-bottom: 20px; 
-            align-items: center;
+            font-size: 1rem; 
+            margin-bottom: 10px;
+            position: relative;
         }
-
-        #search-input {
-            background: transparent; border: none; color: var(--gold);
-            font-style: italic; font-family: inherit; outline: none;
-            width: 180px; border-bottom: 1px solid transparent;
-            transition: border-bottom 0.3s;
-        }
-        #search-input:focus { border-bottom: 1px solid var(--gold); }
 
         .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
         .clickable-text:hover { opacity: 0.7; }
 
-        /* Auth Sections (Appear above Logo) */
-        #auth-container { text-align: center; overflow: hidden; }
+        /* Auth Panels (Above Logo) */
         .auth-panel { 
             display: none; 
             padding: 20px 0; 
             border-bottom: 1px solid rgba(255,215,0,0.3); 
             margin-bottom: 20px; 
+            text-align: center;
             animation: slideDown 0.4s ease-out;
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -83,52 +70,48 @@
         }
 
         /* Logo and Motto */
-        .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; } /* 3x Larger */
+        .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
         .motto { text-align: center; font-style: italic; font-size: 1.2rem; margin-top: 10px; line-height: 1.4; }
         .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
 
-        /* Registry Styling */
-        .registry-entry { margin-bottom: 15px; font-size: 1.15rem; border-bottom: 1px solid rgba(255,215,0,0.05); padding-bottom: 5px; }
+        /* Search: Above the List */
+        .search-container { margin-bottom: 20px; padding-left: 5px; }
+        #search-input {
+            background: transparent; border: none; color: var(--gold);
+            font-style: italic; font-family: inherit; outline: none;
+            width: 200px; font-size: 1.1rem;
+        }
+
+        /* Registry Items */
+        .registry-entry { margin-bottom: 15px; font-size: 1.15rem; }
         .entry-header { 
             display: flex; justify-content: space-between; align-items: center; 
             cursor: pointer; width: 100%;
         }
         .name-part { flex: 1; text-align: left; }
         .rank-part { flex: 1; text-align: right; margin-right: 25px; font-style: italic; }
-        .toggle-part { width: 20px; text-align: right; font-family: monospace; }
-
-        /* Expanded Details Styling */
+        
         .details { 
             display: none; padding: 20px 0; font-size: 1rem; 
             border-top: 1px dashed rgba(255,215,0,0.2); margin-top: 10px;
         }
         .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        
-        .history-section { margin-top: 15px; }
         .history-line { display: block; font-size: 0.9rem; margin-top: 5px; opacity: 0.8; text-align: center; font-style: italic; }
         .no-history { text-align: center; font-style: italic; display: block; margin-top: 10px; opacity: 0.6; }
         
-        .error-msg { color: var(--gold); font-style: italic; font-size: 0.85rem; margin: 10px 0; }
-        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; letter-spacing: 1px; }
-
-        select.formal-input { background: var(--crimson); cursor: pointer; }
+        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; }
     </style>
 </head>
 <body>
 
 <div id="main-box">
-    <div class="top-nav">
-        <div id="search-area">
-            <input type="text" id="search-input" placeholder="Search...">
-        </div>
-        <div id="auth-links">
-            <span class="clickable-text" id="signup-trigger">Sign up</span> &nbsp;
-            <span class="clickable-text" id="login-trigger">Log in</span>
-        </div>
+    <div class="top-nav" id="nav-triggers">
+        <span class="clickable-text" id="signup-trigger">Sign up</span>
+        <span class="clickable-text" id="login-trigger">Log in</span>
     </div>
 
-    <div id="auth-container">
+    <div id="auth-area">
         <div id="register-panel" class="auth-panel">
             <input type="text" id="regDisplay" placeholder="Display Name" class="formal-input">
             <input type="text" id="regUser" placeholder="Username" class="formal-input">
@@ -141,7 +124,7 @@
                 <option value="Pinky">Pinky</option>
                 <option value="Thumb">Thumb</option>
             </select>
-            <div id="reg-error" class="error-msg"></div>
+            <div id="reg-error" style="color:var(--gold); font-size:0.8rem;"></div>
             <div class="bold-btn" id="doRegister">Register</div>
             <div class="clickable-text" onclick="closeAuth()">Cancel</div>
         </div>
@@ -165,8 +148,11 @@
     <div class="motto">La vanità del Soldato,<br>la gloria della famiglia.</div>
     <div class="gold-line"></div>
 
-    <div id="registry-list">
-        </div>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search...">
+    </div>
+
+    <div id="registry-list"></div>
 </div>
 
 <script type="module">
@@ -187,7 +173,7 @@
     let allUsers = [];
 
     const getWeight = (rank) => {
-        const r = rank.toLowerCase();
+        const r = (rank || "").toLowerCase();
         if (r === "lord") return 5;
         if (r.includes("great") || r === "sottocapo" || r === "maestro" || r === "messenger") return 4;
         if (r.includes("star") && !r.includes("aspiring")) return 3;
@@ -198,7 +184,7 @@
 
     const sanitize = (str) => {
         const div = document.createElement('div');
-        div.textContent = str;
+        div.textContent = str || "";
         return div.innerHTML;
     };
 
@@ -218,7 +204,7 @@
             const wa = getWeight(a.rank);
             const wb = getWeight(b.rank);
             if (wb !== wa) return wb - wa;
-            return a.display_name.localeCompare(b.display_name);
+            return (a.display_name || "").localeCompare(b.display_name || "");
         });
 
         sorted.forEach(u => {
@@ -227,18 +213,16 @@
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
-            
             const head = document.createElement('div');
             head.className = 'entry-header';
             head.innerHTML = `
                 <span class="name-part">${sanitize(u.display_name)}</span>
                 <span class="rank-part">${sanitize(u.rank)} of the ${sanitize(u.finger)}</span>
-                <span class="toggle-part">+</span>
+                <span style="width:20px; text-align:right;">+</span>
             `;
             
             const details = document.createElement('div');
             details.className = 'details';
-            
             const historyHtml = (u.promotion_history && u.promotion_history.length > 0) 
                 ? u.promotion_history.map(h => `<span class="history-line">${sanitize(h)}</span>`).join('')
                 : `<span class="no-history">No promotion history</span>`;
@@ -253,7 +237,7 @@
             head.onclick = () => {
                 const isVisible = details.style.display === 'block';
                 details.style.display = isVisible ? 'none' : 'block';
-                head.querySelector('.toggle-part').innerText = isVisible ? '+' : '-';
+                head.children[2].innerText = isVisible ? '+' : '-';
             };
 
             entry.appendChild(head);
@@ -262,23 +246,16 @@
         });
     }
 
-    // --- UI Controls ---
+    // Auth Actions
     window.closeAuth = () => {
         document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
     };
 
-    document.getElementById('signup-trigger').onclick = () => {
-        closeAuth();
-        document.getElementById('register-panel').style.display = 'block';
-    };
-
-    document.getElementById('login-trigger').onclick = () => {
-        closeAuth();
-        if (currentUser) {
-            showProfile();
-        } else {
-            document.getElementById('login-panel').style.display = 'block';
-        }
+    document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
+    document.getElementById('login-trigger').onclick = () => { 
+        closeAuth(); 
+        if(currentUser) showProfile(); 
+        else document.getElementById('login-panel').style.display = 'block'; 
     };
 
     function showProfile() {
@@ -298,17 +275,16 @@
     }
 
     document.getElementById('collapse-info-btn').onclick = closeAuth;
-
     document.getElementById('doLogout').onclick = () => {
         currentUser = null;
         closeAuth();
-        document.getElementById('auth-links').innerHTML = `
-            <span class="clickable-text" id="signup-trigger-new">Sign up</span> &nbsp;
-            <span class="clickable-text" id="login-trigger-new">Log in</span>
+        document.getElementById('nav-triggers').innerHTML = `
+            <span class="clickable-text" id="signup-trigger">Sign up</span>
+            <span class="clickable-text" id="login-trigger">Log in</span>
         `;
-        // Re-attach listeners to new elements
-        document.getElementById('signup-trigger-new').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
-        document.getElementById('login-trigger-new').onclick = () => { closeAuth(); document.getElementById('login-panel').style.display = 'block'; };
+        // Re-attach triggers
+        document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display = 'block'; };
+        document.getElementById('login-trigger').onclick = () => { closeAuth(); document.getElementById('login-panel').style.display = 'block'; };
     };
 
     document.getElementById('doLogin').onclick = async () => {
@@ -318,9 +294,9 @@
         if (snap.exists() && snap.val().password === pw) {
             currentUser = snap.val();
             closeAuth();
-            document.getElementById('auth-links').innerHTML = `<span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
+            document.getElementById('nav-triggers').innerHTML = `<span></span><span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
             document.getElementById('profile-btn').onclick = () => { closeAuth(); showProfile(); };
-        } else alert("Access Denied.");
+        } else alert("Invalid credentials.");
     };
 
     document.getElementById('doRegister').onclick = async () => {
@@ -332,7 +308,7 @@
         const regex = /^[ \u00C0-\u017F\u0400-\u04FF\uAC00-\uD7AF\u4E00-\u9FFF\u3040-\u309Fa-zA-Z()\[\]]+$/;
 
         if (!dn || !un || !pw || !org) return;
-        if (!regex.test(dn)) { err.innerText = "Invalid characters in name."; return; }
+        if (!regex.test(dn)) { err.innerText = "Invalid characters."; return; }
 
         const usersSnap = await get(ref(db, 'users'));
         const users = usersSnap.val() || {};
@@ -349,12 +325,11 @@
         await set(ref(db, `users/${un}`), newUser);
         currentUser = newUser;
         closeAuth();
-        document.getElementById('auth-links').innerHTML = `<span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
+        document.getElementById('nav-triggers').innerHTML = `<span></span><span class="clickable-text" id="profile-btn">Logged in as ${sanitize(currentUser.display_name)}</span>`;
         document.getElementById('profile-btn').onclick = () => { closeAuth(); showProfile(); };
     };
 
     document.getElementById('search-input').oninput = renderList;
-
 </script>
 </body>
 </html>
