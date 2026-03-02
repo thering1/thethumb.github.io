@@ -77,7 +77,9 @@
             display: flex; align-items: center; justify-content: flex-start;
             padding: 10px; border-radius: 2px; cursor: pointer; text-decoration: none;
             font-size: 0.9rem;
+            transition: transform 0.1s;
         }
+        .finger-btn:hover { transform: scale(1.02); }
         .finger-btn img { width: 24px; margin-right: 12px; }
 
         /* Themed Finger Buttons */
@@ -119,10 +121,10 @@
         <div style="position: relative;">
             <button class="nav-link" id="fingers-trigger">Fingers</button>
             <div id="fingers-menu">
-                <div class="finger-btn btn-index"><img src="IndexProselytesIcon.png"> The Index</div>
-                <div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div>
-                <div class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</div>
-                <div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div>
+                <a href="https://thering1.github.io/theindex.github.io" class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</a>
+                <a href="https://thering1.github.io/themiddle.github.io" class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</a>
+                <a href="https://thering1.github.io/thering.github.io" class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</a>
+                <a href="https://thering1.github.io/thepinky.github.io" class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</a>
             </div>
         </div>
 
@@ -311,7 +313,11 @@
         m.style.display = (m.style.display === 'grid' ? 'none' : 'grid');
     };
 
-    document.onclick = () => document.getElementById('fingers-menu').style.display = 'none';
+    document.onclick = () => {
+        document.getElementById('fingers-menu').style.display = 'none';
+        const authMenu = document.getElementById('fingers-menu-auth');
+        if(authMenu) authMenu.style.display = 'none';
+    };
 
     document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display='block'; };
     document.getElementById('login-trigger').onclick = () => { if(currentUser) showProfile(); else { closeAuth(); document.getElementById('login-panel').style.display='block'; }};
@@ -330,9 +336,19 @@
         if (snap.exists() && snap.val().password === pw) {
             currentUser = { username: un, ...snap.val() };
             closeAuth();
-            document.querySelector('.top-nav').innerHTML = `<button class="nav-link" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</button><div style="position:relative;"><button class="nav-link" id="fingers-trigger-auth">fingers</button><div id="fingers-menu-auth" style="display:none; position:absolute; top:30px; left:50%; transform:translateX(-50%); background:var(--crimson); border:1px solid var(--gold); padding:10px; z-index:100; width:220px;"><div class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</div><div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div><div class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</div><div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div></div></div><button class="nav-link" onclick="showProfile()">Profile</button>`;
+            document.querySelector('.top-nav').innerHTML = `
+                <button class="nav-link" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</button>
+                <div style="position:relative;">
+                    <button class="nav-link" id="fingers-trigger-auth">Fingers</button>
+                    <div id="fingers-menu-auth" style="display:none; position:absolute; top:30px; left:50%; transform:translateX(-50%); background:var(--crimson); border:1px solid var(--gold); padding:10px; z-index:100; width:220px; grid-template-columns: 1fr; gap: 10px;">
+                        <a href="https://thering1.github.io/theindex.github.io" class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</a>
+                        <a href="https://thering1.github.io/themiddle.github.io" class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</a>
+                        <a href="https://thering1.github.io/thering.github.io" class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</a>
+                        <a href="https://thering1.github.io/thepinky.github.io" class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</a>
+                    </div>
+                </div>
+                <button class="nav-link" onclick="showProfile()">Profile</button>`;
             
-            // Re-bind listeners for the new auth-nav elements
             const ft = document.getElementById('fingers-trigger-auth');
             const fm = document.getElementById('fingers-menu-auth');
             ft.onclick = (e) => { e.stopPropagation(); fm.style.display = (fm.style.display === 'block' ? 'none' : 'block'); };
