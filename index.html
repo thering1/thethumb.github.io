@@ -35,45 +35,58 @@
             overflow-y: scroll;
         }
 
-        /* Top Navigation */
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .clickable-text { cursor: pointer; transition: opacity 0.2s; font-style: italic; }
-        .clickable-text:hover { opacity: 0.7; }
-
-        /* Fingers Menu Button */
-        .fingers-toggle {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: 1px solid var(--gold);
-            padding: 5px 15px;
-            cursor: pointer;
-            font-weight: bold;
+        /* Top Navigation Styling */
+        .top-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            position: relative;
         }
+        .nav-link { 
+            cursor: pointer; 
+            transition: opacity 0.2s; 
+            font-style: italic; 
+            text-transform: none;
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .nav-link:hover { opacity: 0.7; }
 
-        /* Finger Selection Panel */
+        /* Fingers Dropdown Content */
         #fingers-menu {
             display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 20px;
-            border-bottom: 1px solid var(--gold);
-            margin-bottom: 20px;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--crimson);
+            border: 1px solid var(--gold);
+            padding: 15px;
+            z-index: 100;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            width: 250px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
         .finger-btn {
-            display: flex; align-items: center; justify-content: center;
-            padding: 10px; border-radius: 4px; cursor: pointer; text-decoration: none;
-            transition: transform 0.1s;
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 10px; border-radius: 2px; cursor: pointer; text-decoration: none;
+            font-size: 0.9rem;
         }
-        .finger-btn:active { transform: scale(0.98); }
-        .finger-btn img { width: 30px; margin-right: 10px; }
+        .finger-btn img { width: 24px; margin-right: 12px; }
 
-        .btn-index { background: black; color: #40E0D0; border: 2px solid #40E0D0; font-family: 'Courier New', monospace; }
-        .btn-middle { background: #2e004f; color: var(--gold); border: 2px solid var(--gold); font-family: 'Impact', sans-serif; text-transform: uppercase; }
-        .btn-ring { background: white; color: black; border: 2px solid black; font-family: Arial, sans-serif; }
-        .btn-pinky { background: #8fbc8f; color: #8b0000; border: 2px solid #8b0000; font-family: 'Arial Black', sans-serif; font-weight: bold; }
+        /* Themed Finger Buttons */
+        .btn-index { background: black; color: #40E0D0; border: 1px solid #40E0D0; font-family: 'Courier New', monospace; }
+        .btn-middle { background: #2e004f; color: var(--gold); border: 1px solid var(--gold); font-family: 'Impact', sans-serif; text-transform: uppercase; }
+        .btn-ring { background: white; color: black; border: 1px solid black; font-family: Arial, sans-serif; }
+        .btn-pinky { background: #8fbc8f; color: #8b0000; border: 1px solid #8b0000; font-family: 'Arial Black', sans-serif; font-weight: bold; text-transform: uppercase; }
 
-        /* Forms and Inputs */
+        /* Form/Auth Styling */
         .auth-panel { display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.3); margin-bottom: 20px; text-align: center; }
         .formal-input { 
             background: var(--crimson); border: none; border-bottom: 1px solid var(--gold); 
@@ -83,41 +96,37 @@
         select.formal-input { border: 1px solid var(--gold); }
         select.formal-input option { background: var(--crimson); color: var(--gold); }
 
-        /* Management Styles */
-        .mgmt-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .mgmt-table td, .mgmt-table th { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,215,0,0.2); }
-        .action-group { display: flex; gap: 8px; }
-        .action-btn { cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; border: 1px solid var(--gold); padding: 4px 8px; }
-
-        /* Registry */
         .thumb-icon { width: 180px; display: block; margin: 0 auto 15px; }
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
         .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
+
         #search-input { background: transparent; border: none; color: var(--gold); font-style: italic; font-family: inherit; outline: none; width: 280px; font-size: 1.1rem; margin-bottom: 20px; }
         
-        .registry-entry { margin-bottom: 15px; }
-        .entry-header { display: flex; justify-content: space-between; cursor: pointer; padding: 5px; }
-        .details { display: none; padding: 15px; border-top: 1px dashed rgba(255,215,0,0.3); margin-top: 5px; }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .history-line { display: block; font-size: 0.85rem; font-style: italic; text-align: center; opacity: 0.7; }
+        .registry-entry { margin-bottom: 15px; border-bottom: 1px solid rgba(255,215,0,0.1); padding-bottom: 10px; }
+        .entry-header { display: flex; justify-content: space-between; cursor: pointer; }
+        .details { display: none; padding: 15px; font-size: 0.9rem; }
         
-        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; }
+        .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; border: 1px solid var(--gold); padding: 5px 15px; }
+        .action-btn { cursor: pointer; border: 1px solid var(--gold); padding: 3px 8px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; }
     </style>
 </head>
 <body>
 
 <div id="main-box">
     <div class="top-nav">
-        <span class="clickable-text" id="signup-trigger">Sign up</span>
-        <div class="fingers-toggle" id="fingers-trigger">Fingers</div>
-        <span class="clickable-text" id="login-trigger">Log in</span>
-    </div>
+        <button class="nav-link" id="signup-trigger">Sign up</button>
+        
+        <div style="position: relative;">
+            <button class="nav-link" id="fingers-trigger">fingers</button>
+            <div id="fingers-menu">
+                <div class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</div>
+                <div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div>
+                <div class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</div>
+                <div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div>
+            </div>
+        </div>
 
-    <div id="fingers-menu">
-        <div class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</div>
-        <div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div>
-        <div class="finger-btn btn-ring"><img src="TheRingIcon.png"> The Ring</div>
-        <div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div>
+        <button class="nav-link" id="login-trigger">Log in</button>
     </div>
 
     <div id="auth-area">
@@ -133,21 +142,21 @@
                 <option value="Pinky">Pinky</option>
                 <option value="Thumb">Thumb</option>
             </select>
-            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; height: 15px; margin-top: 5px;"></div>
+            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; margin-top:5px;"></div>
             <div class="bold-btn" id="doRegister">Register</div>
-            <div class="clickable-text" onclick="closeAuth()">Cancel</div>
+            <div class="nav-link" onclick="closeAuth()">Cancel</div>
         </div>
 
         <div id="login-panel" class="auth-panel">
             <input type="text" id="logUser" placeholder="Username" class="formal-input">
             <input type="password" id="logPass" placeholder="Password" class="formal-input">
             <div class="bold-btn" id="doLogin">Enter</div>
-            <div class="clickable-text" onclick="closeAuth()">Cancel</div>
+            <div class="nav-link" onclick="closeAuth()">Cancel</div>
         </div>
 
         <div id="mgmt-panel" class="auth-panel">
             <h2 style="font-size: 1rem; text-transform: uppercase;">Management</h2>
-            <table class="mgmt-table">
+            <table style="width:100%; text-align:left; font-size:0.85rem;">
                 <thead><tr><th>Name</th><th>Rank</th><th>Actions</th></tr></thead>
                 <tbody id="mgmt-body"></tbody>
             </table>
@@ -187,12 +196,7 @@
     let currentUser = null;
     let allUsers = [];
 
-    // --- SECURITY & WEIGHT LOGIC ---
-
-    const strictSanitize = (str) => {
-        if (!str) return "";
-        return str.replace(/<[^>]*>?/gm, '').trim();
-    };
+    const strictSanitize = (str) => str ? str.replace(/<[^>]*>?/gm, '').trim() : "";
 
     const getWeight = (rankStr) => {
         if (!rankStr) return 0;
@@ -204,14 +208,6 @@
         if (r.includes("aspiring") || r.includes("student") || r.includes("soldato") || r.includes("proselyte") || r.includes("little")) return 1;
         return 0;
     };
-
-    const sanitizeDisplay = (str) => {
-        const div = document.createElement('div');
-        div.textContent = str || "";
-        return div.innerHTML;
-    };
-
-    // --- DATA HANDLING ---
 
     onValue(ref(db, 'users'), (snapshot) => {
         const data = snapshot.val();
@@ -231,19 +227,18 @@
         const sorted = [...allUsers].sort((a, b) => getWeight(b.rank) - getWeight(a.rank) || a.display_name.localeCompare(b.display_name));
 
         sorted.forEach(u => {
-            const matches = u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter) || u.finger.toLowerCase().includes(filter);
-            if (filter && !matches) return;
+            if (filter && !(u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter) || u.finger.toLowerCase().includes(filter))) return;
 
             const entry = document.createElement('div');
             entry.className = 'registry-entry';
             entry.innerHTML = `
                 <div class="entry-header">
-                    <span style="flex:1">${sanitizeDisplay(u.display_name)}</span>
-                    <span style="flex:1; text-align:right; font-style:italic;">${sanitizeDisplay(u.rank)} (${sanitizeDisplay(u.finger)})</span>
+                    <span>${u.display_name}</span>
+                    <span style="font-style:italic; opacity:0.8;">${u.rank} (${u.finger})</span>
                 </div>
                 <div class="details">
-                    <div class="detail-row"><span>Organisation</span><span>${u.finger}</span></div>
-                    ${(u.promotion_history || []).slice().reverse().map(h => `<span class="history-line">${sanitizeDisplay(h)}</span>`).join('')}
+                    <div style="text-align:center;">History:</div>
+                    ${(u.promotion_history || []).slice().reverse().map(h => `<div style="text-align:center; opacity:0.6; font-size:0.8rem;">${h}</div>`).join('')}
                 </div>
             `;
             const h = entry.querySelector('.entry-header');
@@ -262,11 +257,11 @@
             const uW = getWeight(u.rank);
             if (u.finger === currentUser.finger && uW < myW && u.username !== currentUser.username) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${sanitizeDisplay(u.display_name)}</td><td>${sanitizeDisplay(u.rank)}</td><td class="action-group" id="act-${u.username}"></td>`;
+                row.innerHTML = `<td>${u.display_name}</td><td>${u.rank}</td><td id="act-${u.username}"></td>`;
                 body.appendChild(row);
-                
                 const cell = document.getElementById(`act-${u.username}`);
-                if (uW < 5 && uW < (myW - 0)) {
+                
+                if (uW < 5 && uW < myW) {
                     const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote";
                     p.onclick = () => changeRank(u, 1); cell.appendChild(p);
                 }
@@ -305,17 +300,18 @@
         loadManagement();
     }
 
-    // --- UI EVENTS ---
-
     window.closeAuth = () => {
         document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
         document.getElementById('fingers-menu').style.display = 'none';
     };
 
-    document.getElementById('fingers-trigger').onclick = () => {
+    document.getElementById('fingers-trigger').onclick = (e) => {
+        e.stopPropagation();
         const m = document.getElementById('fingers-menu');
         m.style.display = (m.style.display === 'grid' ? 'none' : 'grid');
     };
+
+    document.onclick = () => document.getElementById('fingers-menu').style.display = 'none';
 
     document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display='block'; };
     document.getElementById('login-trigger').onclick = () => { if(currentUser) showProfile(); else { closeAuth(); document.getElementById('login-panel').style.display='block'; }};
@@ -323,8 +319,7 @@
     function showProfile() {
         closeAuth();
         const content = document.getElementById('my-info-content');
-        content.innerHTML = `<div style="font-size:1.2rem; margin-bottom:10px;">${sanitizeDisplay(currentUser.display_name)}</div>
-        <div>${currentUser.rank} of the ${currentUser.finger}</div>`;
+        content.innerHTML = `<div style="font-size:1.1rem; margin-bottom:5px;">${currentUser.display_name}</div><div>${currentUser.rank} (${currentUser.finger})</div>`;
         document.getElementById('user-info-panel').style.display = 'block';
     }
 
@@ -335,8 +330,13 @@
         if (snap.exists() && snap.val().password === pw) {
             currentUser = { username: un, ...snap.val() };
             closeAuth();
-            document.querySelector('.top-nav').innerHTML = `<span class="clickable-text" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</span><div class="fingers-toggle" onclick="const m=document.getElementById('fingers-menu'); m.style.display=(m.style.display==='grid'?'none':'grid');">Fingers</div><span class="clickable-text" onclick="showProfile()">Profile</span>`;
-        } else alert("Invalid credentials.");
+            document.querySelector('.top-nav').innerHTML = `<button class="nav-link" onclick="loadManagement(); document.getElementById('mgmt-panel').style.display='block';">Management</button><div style="position:relative;"><button class="nav-link" id="fingers-trigger-auth">fingers</button><div id="fingers-menu-auth" style="display:none; position:absolute; top:30px; left:50%; transform:translateX(-50%); background:var(--crimson); border:1px solid var(--gold); padding:10px; z-index:100; width:220px;"><div class="finger-btn btn-index"><img src="IndexProslytesIcon.png"> The Index</div><div class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</div><div class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</div><div class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</div></div></div><button class="nav-link" onclick="showProfile()">Profile</button>`;
+            
+            // Re-bind listeners for the new auth-nav elements
+            const ft = document.getElementById('fingers-trigger-auth');
+            const fm = document.getElementById('fingers-menu-auth');
+            ft.onclick = (e) => { e.stopPropagation(); fm.style.display = (fm.style.display === 'block' ? 'none' : 'block'); };
+        } else alert("Access Denied.");
     };
 
     document.getElementById('doRegister').onclick = async () => {
@@ -346,13 +346,13 @@
         const org = document.getElementById('regOrg').value;
         const err = document.getElementById('reg-error');
 
-        if (!dn || !un || !pw || !org) { err.innerText = "All fields required."; return; }
+        if (!dn || !un || !pw || !org) { err.innerText = "Fields incomplete."; return; }
         if (allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase())) {
-            err.innerText = "Name already taken."; return;
+            err.innerText = "Identity already exists."; return;
         }
 
         const startR = {"Index":"Proselyte", "Ring":"Student", "Middle":"Little Brother", "Pinky":"Aspiring Star", "Thumb":"Soldato"}[org];
-        await set(ref(db, `users/${un}`), { display_name: dn, password: pw, finger: org, rank: startR, promotion_history: [`Joined as ${startR}`] });
+        await set(ref(db, `users/${un}`), { display_name: dn, password: pw, finger: org, rank: startR, promotion_history: [`Initiated as ${startR}`] });
         
         document.getElementById('regDisplay').value = ""; document.getElementById('regUser').value = "";
         document.getElementById('regPass').value = ""; document.getElementById('regOrg').selectedIndex = 0;
