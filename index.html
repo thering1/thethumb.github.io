@@ -10,6 +10,10 @@
             --crimson: #4a0404;
             --gold: #ffd700;
             --gold-shadow: rgba(255, 215, 0, 0.4);
+            --turquoise: #40E0D0;
+            --deep-purple: #2e004f;
+            --faded-green: #8fbc8f;
+            --blood-red: #8b0000;
         }
 
         * { scrollbar-width: none; -ms-overflow-style: none; }
@@ -56,6 +60,31 @@
         }
         .nav-link:hover { opacity: 0.7; }
 
+        .tab-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0 20px 0;
+        }
+        .tab-item {
+            color: var(--gold);
+            font-style: italic;
+            cursor: pointer;
+            padding-bottom: 5px;
+            position: relative;
+            transition: 0.3s;
+        }
+        .tab-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: 0.3s;
+            opacity: 0.7;
+        }
+        .tab-item:hover::after { transform: scaleX(1); }
+        .tab-item.active { border-bottom: 2px solid var(--gold); }
+
         #fingers-menu {
             display: none;
             position: absolute;
@@ -81,12 +110,12 @@
         .finger-btn:hover { transform: scale(1.02); }
         .finger-btn img { width: 24px; margin-right: 12px; }
 
-        .btn-index { background: black; color: #40E0D0; border: 1px solid #40E0D0; font-family: 'Courier New', monospace; }
-        .btn-middle { background: #2e004f; color: var(--gold); border: 1px solid var(--gold); font-family: 'Impact', sans-serif; text-transform: uppercase; }
+        .btn-index { background: black; color: var(--turquoise); border: 1px solid var(--turquoise); font-family: 'Courier New', monospace; }
+        .btn-middle { background: var(--deep-purple); color: var(--gold); border: 1px solid var(--gold); font-family: 'Impact', sans-serif; text-transform: uppercase; }
         .btn-ring { background: white; color: black; border: 1px solid black; font-family: Arial, sans-serif; }
-        .btn-pinky { background: #8fbc8f; color: #8b0000; border: 1px solid #8b0000; font-family: 'Arial Black', sans-serif; font-weight: bold; text-transform: uppercase; }
+        .btn-pinky { background: var(--faded-green); color: var(--blood-red); border: 1px solid var(--blood-red); font-family: 'Arial Black', sans-serif; font-weight: bold; text-transform: uppercase; }
 
-        .auth-panel { display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.3); margin-bottom: 20px; text-align: center; }
+        .auth-panel { display: none; padding: 20px 0; border-bottom: 1px solid rgba(255,215,0,0.5); margin-bottom: 20px; text-align: center; }
         .formal-input { 
             background: var(--crimson); border: none; border-bottom: 1px solid var(--gold); 
             color: var(--gold); font-style: italic; padding: 5px; font-family: inherit;
@@ -99,28 +128,48 @@
         h1 { text-align: center; font-size: 3.5rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
         .gold-line { width: 90%; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.7; }
 
+        #population-counter { margin: 20px auto; width: 300px; font-size: 1.1rem; }
+        .pop-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .pop-label { font-weight: bold; color: var(--gold); }
+        .pop-val { font-style: italic; color: var(--gold); }
+
         #search-input { background: transparent; border: none; color: var(--gold); font-style: italic; font-family: inherit; outline: none; width: 280px; font-size: 1.1rem; margin-bottom: 20px; }
-        
         .registry-entry { margin-bottom: 15px; border-bottom: 1px solid rgba(255,215,0,0.1); padding-bottom: 10px; }
         .entry-header { display: flex; justify-content: space-between; cursor: pointer; align-items: center; }
         .status-symbol { font-size: 1.2rem; font-weight: bold; margin-left: 10px; width: 20px; text-align: center; }
-        
         .details { display: none; padding: 15px; font-size: 0.9rem; }
-        
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-            padding-bottom: 4px;
-        }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 215, 0, 0.1); padding-bottom: 4px; }
         .detail-field-label { font-weight: bold; }
 
         .history-title { text-align: center; margin: 15px 0 5px 0; text-decoration: underline; letter-spacing: 1px; font-weight: bold;}
         .no-history { color: var(--gold); font-style: italic; text-align: center; margin: 10px 0; }
-        
         .bold-btn { font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; display: inline-block; border: 1px solid var(--gold); padding: 5px 15px; }
-        .action-btn { cursor: pointer; border: 1px solid var(--gold); padding: 3px 8px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; }
+        .action-btn { cursor: pointer; border: 1px solid var(--gold); padding: 5px 12px; font-size: 0.75rem; font-weight: bold; margin-right: 15px; }
+
+        .ban-item { background: var(--blood-red); border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold); padding: 15px; margin-bottom: 20px; }
+        .ban-req-by { font-style: italic; color: var(--gold); margin-bottom: 5px; }
+
+        .chat-container { border: 1px solid var(--gold); height: 400px; overflow-y: scroll; padding: 20px; background: rgba(0,0,0,0.3); }
+        .chat-msg { margin-bottom: 15px; text-align: left; }
+        .chat-meta { font-weight: bold; font-size: 0.85rem; }
+        .chat-text { padding: 5px 0; }
+
+        #profile-modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 800px; height: 500px; z-index: 2000;
+            border-width: 3px; border-style: solid; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            flex-wrap: wrap; overflow-y: scroll;
+        }
+        .profile-left { width: 50%; height: 100%; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; position: relative; }
+        .profile-right { width: 50%; padding: 30px; box-sizing: border-box; position: relative; }
+        .edit-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border: 1px solid currentColor; font-size: 0.7rem; margin-left: 10px; cursor: pointer; font-weight: bold; }
+
+        .sub-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--crimson); border: 2px solid var(--gold); padding: 30px; z-index: 3000; display: none; text-align: center; }
+
+        @media (max-width: 700px) {
+            #profile-modal { height: auto; flex-direction: column; }
+            .profile-left, .profile-right { width: 100%; height: 300px; }
+        }
     </style>
 </head>
 <body>
@@ -128,7 +177,6 @@
 <div id="main-box">
     <div class="top-nav" id="navigation-bar">
         <button class="nav-link" id="signup-trigger">Sign up</button>
-        
         <div style="position: relative;">
             <button class="nav-link" id="fingers-trigger">Fingers</button>
             <div id="fingers-menu">
@@ -138,7 +186,6 @@
                 <a href="https://thering1.github.io/thepinky.github.io" class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</a>
             </div>
         </div>
-
         <button class="nav-link" id="login-trigger">Log in</button>
     </div>
 
@@ -155,59 +202,105 @@
                 <option value="Pinky">Pinky</option>
                 <option value="Thumb">Thumb</option>
             </select>
-            <div id="reg-error" style="color:var(--gold); font-size:0.8rem; margin-top:5px;"></div>
             <div class="bold-btn" id="doRegister">Register</div>
             <div class="nav-link" onclick="closeAuth()">Cancel</div>
         </div>
-
         <div id="login-panel" class="auth-panel">
             <input type="text" id="logUser" placeholder="Username" class="formal-input">
             <input type="password" id="logPass" placeholder="Password" class="formal-input">
             <div class="bold-btn" id="doLogin">Enter</div>
             <div class="nav-link" onclick="closeAuth()">Cancel</div>
         </div>
-
         <div id="mgmt-panel" class="auth-panel">
             <h2 style="font-size: 1rem; text-transform: uppercase;">Management</h2>
-            <table style="width:100%; text-align:left; font-size:0.85rem;">
+            <table style="width:100%; text-align:left; font-size:0.85rem; border-spacing: 0 10px;">
                 <thead><tr><th>Name</th><th>Rank</th><th>Actions</th></tr></thead>
                 <tbody id="mgmt-body"></tbody>
             </table>
             <div class="bold-btn" onclick="closeAuth()">Close</div>
-        </div>
-
-        <div id="user-info-panel" class="auth-panel">
-            <div id="my-info-content"></div>
-            <div class="bold-btn" onclick="closeAuth()">Collapse</div>
-            <div class="bold-btn" id="doLogout" style="color:#ff4d4d;">Log out</div>
         </div>
     </div>
 
     <img src="TheThumbIcon.png" alt="Thumb" class="thumb-icon">
     <h1>The Thumb</h1>
     <div style="text-align: center; font-style: italic;">La vanità del Soldato, la gloria della famiglia.</div>
+    
     <div class="gold-line"></div>
 
-    <input type="text" id="search-input" placeholder="Search by Name, Rank, or Finger...">
-    <div id="registry-list"></div>
+    <div class="tab-container">
+        <div class="tab-item active" id="tab-accounts">Accounts</div>
+        <div class="tab-item" id="tab-bans">Live Ban Feed</div>
+        <div class="tab-item" id="tab-chats">Invite Chatrooms</div>
+    </div>
+
+    <div id="view-accounts">
+        <div id="population-counter"></div>
+        <input type="text" id="search-input" placeholder="Search by Name, Rank, or Finger...">
+        <div id="registry-list"></div>
+    </div>
+
+    <div id="view-bans" style="display:none;">
+        <div id="ban-feed-list"></div>
+    </div>
+
+    <div id="view-chats" style="display:none;">
+        <div id="chat-lobby" style="text-align:center;">
+            <input type="text" id="join-pass" placeholder="Enter Room Password" class="formal-input" style="background:var(--crimson); border:1px solid var(--gold); width:250px;">
+            <div class="bold-btn" id="doJoin">Enter Room</div>
+            <div style="margin:20px 0;">OR</div>
+            <div class="bold-btn" id="do-create-room">+ Create Room +</div>
+        </div>
+        <div id="chat-room" style="display:none;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span class="nav-link" id="chat-back"><i>Back</i></span>
+                <span id="room-code-display" style="font-weight:bold;">CODE: 00000000</span>
+            </div>
+            <div class="chat-container" id="chat-messages"></div>
+            <div style="display:flex; margin-top:10px;">
+                <input type="text" id="chat-input" placeholder="Type message..." class="formal-input" style="flex-grow:1; border:1px solid var(--gold);">
+                <button class="nav-link" id="chat-send" style="padding:0 15px;">(send)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="profile-modal">
+    <div class="profile-left" id="prof-img-box"><div id="upload-placeholder">Upload Image</div></div>
+    <div class="profile-right">
+        <div style="font-size:1.5rem; cursor:pointer; position:absolute; top:10px; left:10px; font-weight:bold; color:red; line-height:1;" id="close-profile">X</div>
+        <div style="font-size:0.8rem; cursor:pointer; position:absolute; top:10px; right:15px; font-weight:bold; font-style:italic;" id="logout-btn">Logout</div>
+        
+        <div style="font-size:2rem; font-weight:bold;" id="prof-name">Name</div>
+        <div id="prof-name-underline" style="height:2px; margin-top:2px; margin-bottom:10px;"></div>
+        <div id="prof-rank" style="font-style:italic; margin-bottom:5px;">Rank</div>
+        <div id="prof-div" style="margin-bottom:20px;">Division</div>
+        <div id="prof-pronouns" style="font-style:italic; margin-bottom:15px;">Pronouns</div>
+        <div id="prof-bio" style="font-size:0.9rem; line-height:1.4; max-height:150px; overflow-y:auto;">Bio</div>
+    </div>
+</div>
+
+<input type="file" id="image-upload-input" accept="image/*" style="display:none;">
+
+<div id="editor-modal" class="sub-modal">
+    <h3 id="edit-title">Edit</h3>
+    <div id="edit-container"></div>
+    <div style="margin-top:20px;">
+        <div class="bold-btn" id="save-edit">Save</div>
+        <div class="bold-btn" id="cancel-edit">Cancel</div>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, update, onValue, get, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const accountConfig = {
-        apiKey: "AIzaSyDHSXFPCiG2kjRAFzqUJn1OQoXD1bCtfH8",
-        authDomain: "account-data-54450.firebaseapp.com",
-        databaseURL: "https://account-data-54450-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "account-data-54450"
-    };
-
+    const accountConfig = { databaseURL: "https://account-data-54450-default-rtdb.asia-southeast1.firebasedatabase.app" };
     const app = initializeApp(accountConfig);
     const db = getDatabase(app);
 
     let currentUser = null;
     let allUsers = [];
+    let currentRoomId = null;
 
     const strictSanitize = (str) => str ? str.replace(/<[^>]*>?/gm, '').trim() : "";
 
@@ -222,240 +315,321 @@
         return 0;
     };
 
+    const getColorTheme = (finger) => {
+        switch(finger) {
+            case "Ring": return { maj: "white", min: "black" };
+            case "Thumb": return { maj: "#4a0404", min: "#ffd700" };
+            case "Middle": return { maj: "#2e004f", min: "#ffd700" };
+            case "Index": return { maj: "black", min: "#40E0D0" };
+            case "Pinky": return { maj: "#8fbc8f", min: "#8b0000" };
+            default: return { maj: "#4a0404", min: "#ffd700" };
+        }
+    };
+
+    const tabs = ["accounts", "bans", "chats"];
+    tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).onclick = () => {
+            tabs.forEach(id => {
+                document.getElementById(`view-${id}`).style.display = (id === t ? 'block' : 'none');
+                document.getElementById(`tab-${id}`).classList.toggle('active', id === t);
+            });
+        };
+    });
+
+    window.requestBan = async (u) => {
+        if (!currentUser || getWeight(currentUser.rank) < 4) return;
+        const banRef = push(ref(db, 'bans'));
+        await set(banRef, {
+            requestedBy: `${currentUser.display_name}, ${currentUser.rank} of the ${currentUser.finger}`,
+            targetUn: u.username,
+            targetName: u.display_name,
+            targetRank: u.rank,
+            targetFinger: u.finger,
+            resolved: false,
+            votes: {}
+        });
+        alert(`Request to ban ${u.display_name} sent to feed.`);
+    };
+
+    window.changeRank = async (u, direction) => {
+        const ranks = {
+            "Index": ["Proselyte", "Proxy", "Messenger"],
+            "Ring": ["Student", "Docente", "Maestro", "Lord"],
+            "Middle": ["Little Sibling", "Big Sibling", "Great Sibling"],
+            "Pinky": ["Aspiring Star", "Star"],
+            "Thumb": ["Soldato", "Capo", "Sottocapo"]
+        };
+        const list = ranks[u.finger];
+        let currentBase = u.rank.replace("Brother", "Sibling").replace("Sister", "Sibling");
+        let idx = list.indexOf(currentBase);
+        let newIdx = idx + direction;
+        if (newIdx >= 0 && newIdx < list.length) {
+            let newRank = list[newIdx];
+            if(u.finger === "Middle") {
+                if(u.pronouns === "He/Him") newRank = newRank.replace("Sibling", "Brother");
+                else if(u.pronouns === "She/Her") newRank = newRank.replace("Sibling", "Sister");
+            }
+            const history = u.promotion_history || [];
+            history.push(`${direction > 0 ? 'Promoted' : 'Demoted'} to ${newRank}`);
+            await update(ref(db, `users/${u.username}`), { rank: newRank, promotion_history: history });
+            window.loadManagement();
+        }
+    };
+
+    function attachEditor(userObj, field, displayElement) {
+        const editIcon = document.createElement('span');
+        editIcon.className = 'edit-icon'; editIcon.innerText = 'E';
+        displayElement.appendChild(editIcon);
+        editIcon.onclick = (e) => {
+            e.stopPropagation();
+            const modal = document.getElementById('editor-modal');
+            const container = document.getElementById('edit-container');
+            document.getElementById('edit-title').innerText = `Edit ${field.replace('_', ' ')}`;
+            
+            if (field === "bio") {
+                container.innerHTML = `<textarea id="edit-val" class="formal-input" style="width:100%; height:100px;">${userObj[field]}</textarea>`;
+            } else if (field === "pronouns") {
+                container.innerHTML = `<select id="edit-val" class="formal-input">
+                    <option value="He/Him" ${userObj[field] === "He/Him" ? "selected" : ""}>He/Him</option>
+                    <option value="She/Her" ${userObj[field] === "She/Her" ? "selected" : ""}>She/Her</option>
+                    <option value="They/Them" ${userObj[field] === "They/Them" ? "selected" : ""}>They/Them</option>
+                </select>`;
+            } else {
+                container.innerHTML = `<input type="text" id="edit-val" class="formal-input" value="${userObj[field]}">`;
+            }
+            
+            modal.style.display = 'block';
+            document.getElementById('save-edit').onclick = async () => {
+                const newVal = strictSanitize(document.getElementById('edit-val').value);
+                const updates = {}; 
+                updates[field] = newVal;
+
+                // SPECIAL MIDDLE LOGIC: Sync rank with pronouns
+                if (field === "pronouns" && userObj.finger === "Middle") {
+                    let currentRank = userObj.rank;
+                    if (newVal === "He/Him") currentRank = currentRank.replace("Sister", "Brother").replace("Sibling", "Brother");
+                    else if (newVal === "She/Her") currentRank = currentRank.replace("Brother", "Sister").replace("Sibling", "Sister");
+                    else if (newVal === "They/Them") currentRank = currentRank.replace("Brother", "Sibling").replace("Sister", "Sibling");
+                    updates["rank"] = currentRank;
+                }
+
+                await update(ref(db, `users/${userObj.username}`), updates);
+                modal.style.display = 'none';
+                openProfile(userObj.username);
+            };
+            document.getElementById('cancel-edit').onclick = () => modal.style.display = 'none';
+        };
+    }
+
     onValue(ref(db, 'users'), (snapshot) => {
         const data = snapshot.val();
         allUsers = [];
-        for (let id in data) allUsers.push({ username: id, ...data[id] });
-        renderList();
-        if (currentUser && data[currentUser.username]) {
-            currentUser = { username: currentUser.username, ...data[currentUser.username] };
-            // Update UI if profile is open
-            if(document.getElementById('user-info-panel').style.display === 'block') showProfile();
+        const counts = { Index: 0, Ring: 0, Middle: 0, Pinky: 0, Thumb: 0 };
+        for (let id in data) {
+            allUsers.push({ username: id, ...data[id] });
+            if (counts[data[id].finger] !== undefined) counts[data[id].finger]++;
         }
+        renderList(); renderPopulation(counts);
+        const savedUn = localStorage.getItem('thumb_user');
+        if (savedUn && data[savedUn] && !currentUser) loginSession(savedUn, data[savedUn]);
     });
+
+    function renderPopulation(counts) {
+        const div = document.getElementById('population-counter');
+        const total = Object.values(counts).reduce((a, b) => a + b, 0);
+        div.innerHTML = `<div style="font-style:italic; color:var(--gold); margin-bottom:10px;">Accounts</div>` + Object.keys(counts).map(f => `<div class="pop-row"><span class="pop-label">The ${f}:</span><span class="pop-val">(${counts[f]})</span></div>`).join('') + `<div class="pop-row" style="margin-top:5px;"><span class="pop-label">Total:</span><span class="pop-val">(${total})</span></div>`;
+    }
 
     function renderList() {
         const filter = document.getElementById('search-input').value.toLowerCase();
-        const listDiv = document.getElementById('registry-list');
-        listDiv.innerHTML = "";
-
-        const sorted = [...allUsers].sort((a, b) => getWeight(b.rank) - getWeight(a.rank) || a.display_name.localeCompare(b.display_name));
-
+        const listDiv = document.getElementById('registry-list'); listDiv.innerHTML = "";
+        const sorted = [...allUsers].sort((a, b) => getWeight(b.rank) - getWeight(a.rank));
         sorted.forEach(u => {
             if (filter && !(u.display_name.toLowerCase().includes(filter) || u.rank.toLowerCase().includes(filter) || u.finger.toLowerCase().includes(filter))) return;
-
-            const entry = document.createElement('div');
-            entry.className = 'registry-entry';
-            
-            const formattedRank = `${u.rank} of the ${u.finger}`;
-
-            let historyHtml = "";
-            if (!u.promotion_history || u.promotion_history.length === 0) {
-                historyHtml = `<div class="no-history">No promotion history</div>`;
-            } else {
-                historyHtml = u.promotion_history.slice().reverse().map(h => 
-                    `<div style="text-align:center; opacity:0.6; font-size:0.8rem; margin-bottom:2px;">${h}</div>`
-                ).join('');
-            }
-
-            entry.innerHTML = `
-                <div class="entry-header">
-                    <span style="flex-grow: 1;">${u.display_name}</span>
-                    <span style="font-style:italic; opacity:0.8;">${formattedRank}</span>
-                    <span class="status-symbol">+</span>
-                </div>
-                <div class="details">
-                    <div class="detail-row">
-                        <span class="detail-field-label">Name</span>
-                        <span>${u.display_name}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-field-label">Finger</span>
-                        <span>${u.finger}</span>
-                    </div>
-                    <div class="history-title">HISTORY</div>
-                    ${historyHtml}
-                </div>
-            `;
-
-            const h = entry.querySelector('.entry-header');
-            const d = entry.querySelector('.details');
-            const symbol = entry.querySelector('.status-symbol');
-
-            h.onclick = () => {
-                const isHidden = (d.style.display === 'none' || d.style.display === '');
-                d.style.display = isHidden ? 'block' : 'none';
-                symbol.innerText = isHidden ? '-' : '+';
-            };
+            const entry = document.createElement('div'); entry.className = 'registry-entry';
+            const historyHtml = u.promotion_history ? u.promotion_history.slice().reverse().map(h => `<div style="text-align:center; opacity:0.6; font-size:0.8rem;">${h}</div>`).join('') : '<div class="no-history">No history</div>';
+            entry.innerHTML = `<div class="entry-header"><span style="flex-grow: 1;">${u.display_name}</span><span style="font-style:italic; opacity:0.8;">${u.rank} of the ${u.finger}</span><span class="status-symbol">+</span></div><div class="details"><div class="detail-row"><span class="detail-field-label">Name</span><span>${u.display_name}</span></div><div class="detail-row"><span class="detail-field-label">Finger</span><span>${u.finger}</span></div><div style="text-align:center; margin-top:10px;"><span class="nav-link" style="text-decoration:underline;" onclick="openProfile('${u.username}')"><i>View personal page</i></span></div><div class="history-title">HISTORY</div>${historyHtml}</div>`;
+            const h = entry.querySelector('.entry-header'), d = entry.querySelector('.details'), s = entry.querySelector('.status-symbol');
+            h.onclick = () => { const isH = (d.style.display === 'none' || d.style.display === ''); d.style.display = isH ? 'block' : 'none'; s.innerText = isH ? '-' : '+'; };
             listDiv.appendChild(entry);
         });
     }
 
-    // Global Management Logic
-    window.loadManagement = () => {
-        closeAuth();
-        const body = document.getElementById('mgmt-body');
-        body.innerHTML = "";
-        if (!currentUser) return;
-        
-        const myW = getWeight(currentUser.rank);
-        let found = false;
-
-        allUsers.forEach(u => {
-            const uW = getWeight(u.rank);
-            if (u.finger === currentUser.finger && uW < myW && u.username !== currentUser.username) {
-                found = true;
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${u.display_name}</td><td>${u.rank}</td><td id="act-${u.username}"></td>`;
-                body.appendChild(row);
-                const cell = document.getElementById(`act-${u.username}`);
-                
-                if (uW < 5 && uW < myW) {
-                    const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote";
-                    p.onclick = () => changeRank(u, 1); cell.appendChild(p);
-                }
-                if (uW > 1) {
-                    const d = document.createElement('span'); d.className="action-btn"; d.innerText="Demote"; d.style.color="#ff4d4d";
-                    d.onclick = () => changeRank(u, -1); cell.appendChild(d);
-                }
-            }
+    onValue(ref(db, 'bans'), snap => {
+        const list = document.getElementById('ban-feed-list'); list.innerHTML = "";
+        snap.forEach(child => {
+            const b = child.val(); const id = child.key;
+            const div = document.createElement('div'); div.className = 'ban-item';
+            let banCount = 0, xCount = 0; if(b.votes) Object.values(b.votes).forEach(v => v === "BAN" ? banCount++ : xCount++);
+            div.innerHTML = `<div class="ban-req-by">Ban requested by: ${b.requestedBy}</div><div style="font-weight:bold;">${b.targetName}, ${b.targetRank} of the ${b.targetFinger}</div><div style="margin-top:10px;"><button class="action-btn" id="vb-${id}" ${b.resolved ? 'disabled' : ''}>BAN (${banCount})</button><button class="action-btn" id="vx-${id}" ${b.resolved ? 'disabled' : ''}>X (${xCount})</button></div>`;
+            div.querySelector(`#vb-${id}`).onclick = () => castVote(id, b, "BAN");
+            div.querySelector(`#vx-${id}`).onclick = () => castVote(id, b, "X");
+            list.appendChild(div);
         });
+    });
 
-        if(!found) body.innerHTML = "<tr><td colspan='3' style='text-align:center; opacity:0.5;'>No subordinates found.</td></tr>";
-        document.getElementById('mgmt-panel').style.display = 'block';
-    };
-
-    async function changeRank(user, dir) {
-        const curW = getWeight(user.rank);
-        const newW = curW + dir;
-        const rankMap = {
-            "Index": ["Proselyte", "Proxy", "", "Messenger"],
-            "Ring": ["Student", "Docente", "", "Maestro", "Lord"],
-            "Pinky": ["Aspiring Star", "", "Star"],
-            "Thumb": ["Soldato", "Capo", "", "Sottocapo"]
-        };
-
-        let newBase = "";
-        if (user.finger === "Middle") {
-            const gender = user.rank.toLowerCase().includes("sister") ? "Sister" : "Brother";
-            newBase = ["", "Little", "Big", "", "Great"][newW] + " " + gender;
-        } else {
-            newBase = rankMap[user.finger][newW - 1];
+    async function castVote(bid, bData, type) {
+        if (!currentUser || getWeight(currentUser.rank) < 4) { alert("Insufficient Rank."); return; }
+        if (bData.votes && bData.votes[currentUser.username]) { alert("Already voted."); return; }
+        const updates = {}; updates[`bans/${bid}/votes/${currentUser.username}`] = type;
+        await update(ref(db), updates);
+        const b = (await get(ref(db, `bans/${bid}`))).val();
+        let banV = 0, xV = 0; Object.values(b.votes).forEach(v => v === "BAN" ? banV++ : xV++);
+        if (Math.abs(banV - xV) >= 2) {
+            await update(ref(db, `bans/${bid}`), { resolved: true });
+            if (banV > xV) await remove(ref(db, `users/${b.targetUn}`));
         }
-
-        let finalRank = newBase;
-        if (user.rank.includes(" - ")) finalRank += " - " + user.rank.split(" - ")[1];
-
-        const history = user.promotion_history || [];
-        history.push(`${dir > 0 ? "Promoted" : "Demoted"} to ${finalRank}`);
-        await update(ref(db, `users/${user.username}`), { rank: finalRank, promotion_history: history });
-        loadManagement();
     }
 
-    window.closeAuth = () => {
-        document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none');
-        document.getElementById('fingers-menu').style.display = 'none';
+    document.getElementById('do-create-room').onclick = async () => {
+        const pass = strictSanitize(document.getElementById('join-pass').value);
+        if (!pass) { alert("Room password required."); return; }
+        const newRoomRef = push(ref(db, 'chats'));
+        await set(newRoomRef, { password: pass, messages: {} });
+        joinRoom(newRoomRef.key);
     };
 
-    // Profile Display Logic
-    window.showProfile = () => {
+    document.getElementById('doJoin').onclick = async () => {
+        const pass = strictSanitize(document.getElementById('join-pass').value);
+        const snap = await get(ref(db, 'chats'));
+        let foundId = null;
+        snap.forEach(c => { if (c.val().password === pass) foundId = c.key; });
+        if (foundId) joinRoom(foundId); else alert("Invalid Room Passcode.");
+    };
+
+    function joinRoom(id) {
+        currentRoomId = id;
+        document.getElementById('chat-lobby').style.display = 'none';
+        document.getElementById('chat-room').style.display = 'block';
+        document.getElementById('room-code-display').innerText = `CODE: ${id.substring(1, 9)}`;
+        const mDiv = document.getElementById('chat-messages');
+        onValue(ref(db, `chats/${id}/messages`), snap => {
+            mDiv.innerHTML = "";
+            snap.forEach(msgSnap => {
+                const m = msgSnap.val();
+                const d = document.createElement('div'); d.className = 'chat-msg';
+                d.innerHTML = `<div class="chat-meta">${m.sender}, ${m.rank} of the ${m.finger}</div><div class="chat-text">${m.text}</div>`;
+                mDiv.appendChild(d);
+            });
+            mDiv.scrollTop = mDiv.scrollHeight;
+        });
+    }
+
+    document.getElementById('chat-send').onclick = async () => {
+        const txt = strictSanitize(document.getElementById('chat-input').value);
+        if (!txt || !currentUser) return;
+        await push(ref(db, `chats/${currentRoomId}/messages`), { 
+            sender: currentUser.display_name, 
+            rank: currentUser.rank,
+            finger: currentUser.finger, 
+            text: txt 
+        });
+        document.getElementById('chat-input').value = "";
+    };
+
+    document.getElementById('chat-back').onclick = () => { currentRoomId = null; document.getElementById('chat-lobby').style.display = 'block'; document.getElementById('chat-room').style.display = 'none'; };
+
+    function loginSession(un, data) {
+        currentUser = { username: un, ...data };
+        localStorage.setItem('thumb_user', un);
         closeAuth();
-        if(!currentUser) return;
-        const content = document.getElementById('my-info-content');
-        content.innerHTML = `
-            <div style="font-size:1.3rem; margin-bottom:10px; border-bottom:1px solid var(--gold); display:inline-block; padding:0 20px;">${currentUser.display_name}</div>
-            <div style="font-style:italic; margin-bottom:15px;">${currentUser.rank} of the ${currentUser.finger}</div>
-        `;
-        document.getElementById('user-info-panel').style.display = 'block';
-    };
+        const nav = document.getElementById('navigation-bar');
+        nav.innerHTML = `<button class="nav-link" onclick="window.loadManagement()">Management</button><div style="position: relative;"><button class="nav-link" id="fingers-trigger">Fingers</button><div id="fingers-menu"><a href="https://thering1.github.io/theindex.github.io" class="finger-btn btn-index"><img src="IndexProselytesIcon.png"> The Index</a><a href="https://thering1.github.io/themiddle.github.io" class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</a><a href="https://thering1.github.io/thering.github.io" class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</a><a href="https://thering1.github.io/thepinky.github.io" class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</a></div></div><button class="nav-link" onclick="window.showProfile()">Profile</button>`;
+        document.getElementById('fingers-trigger').onclick = (e) => { e.stopPropagation(); const m = document.getElementById('fingers-menu'); m.style.display = (m.style.display === 'grid' ? 'none' : 'grid'); };
+    }
 
-    // Toggle Finger Menu
-    const toggleFingers = (e) => {
-        e.stopPropagation();
-        const m = document.getElementById('fingers-menu');
-        m.style.display = (m.style.display === 'grid' ? 'none' : 'grid');
-    };
-
-    document.getElementById('fingers-trigger').onclick = toggleFingers;
-
-    document.onclick = () => {
-        document.getElementById('fingers-menu').style.display = 'none';
-    };
-
-    document.getElementById('signup-trigger').onclick = () => { 
-        closeAuth(); 
-        document.getElementById('register-panel').style.display='block'; 
-    };
-
-    document.getElementById('login-trigger').onclick = () => { 
-        closeAuth(); 
-        document.getElementById('login-panel').style.display='block'; 
-    };
-
-    // LOGIN ACTION
     document.getElementById('doLogin').onclick = async () => {
-        const un = strictSanitize(document.getElementById('logUser').value);
-        const pw = document.getElementById('logPass').value;
+        const un = strictSanitize(document.getElementById('logUser').value), pw = document.getElementById('logPass').value;
         const snap = await get(ref(db, `users/${un}`));
-        
-        if (snap.exists() && snap.val().password === pw) {
-            currentUser = { username: un, ...snap.val() };
-            closeAuth();
-            
-            // Re-render Nav Bar to preserve ALL tools
-            const nav = document.getElementById('navigation-bar');
-            nav.innerHTML = `
-                <button class="nav-link" onclick="window.loadManagement()">Management</button>
-                
-                <div style="position: relative;">
-                    <button class="nav-link" id="fingers-trigger">Fingers</button>
-                    <div id="fingers-menu">
-                        <a href="https://thering1.github.io/theindex.github.io" class="finger-btn btn-index"><img src="IndexProselytesIcon.png"> The Index</a>
-                        <a href="https://thering1.github.io/themiddle.github.io" class="finger-btn btn-middle"><img src="thethumb.png"> The Middle</a>
-                        <a href="https://thering1.github.io/thering.github.io" class="finger-btn btn-ring"><img src="The_Ring_Icon.png"> The Ring</a>
-                        <a href="https://thering1.github.io/thepinky.github.io" class="finger-btn btn-pinky"><img src="PMLogo.png"> THE PINKY</a>
-                    </div>
-                </div>
-
-                <button class="nav-link" onclick="window.showProfile()">Profile</button>
-            `;
-            
-            // Re-bind the click event for the new Fingers button
-            document.getElementById('fingers-trigger').onclick = toggleFingers;
-            
-            showProfile();
-        } else alert("Access Denied.");
+        if (snap.exists() && snap.val().password === pw) { loginSession(un, snap.val()); showProfile(); } else alert("Access Denied.");
     };
 
-    // REGISTER ACTION
     document.getElementById('doRegister').onclick = async () => {
-        const dn = strictSanitize(document.getElementById('regDisplay').value);
-        const un = strictSanitize(document.getElementById('regUser').value);
-        const pw = document.getElementById('regPass').value;
-        const org = document.getElementById('regOrg').value;
-        const err = document.getElementById('reg-error');
-
-        if (!dn || !un || !pw || !org) { err.innerText = "Fields incomplete."; return; }
-        if (allUsers.some(u => u.username.toLowerCase() === un.toLowerCase() || u.display_name.toLowerCase() === dn.toLowerCase())) {
-            err.innerText = "Identity already exists."; return;
+        const dn = strictSanitize(document.getElementById('regDisplay').value), un = strictSanitize(document.getElementById('regUser').value), pw = document.getElementById('regPass').value, org = document.getElementById('regOrg').value;
+        if (!dn || !un || !pw || !org) return;
+        
+        const snap = await get(ref(db, 'users'));
+        const users = snap.val() || {};
+        for (let key in users) {
+            if (key.toLowerCase() === un.toLowerCase()) { alert("Username already taken."); return; }
+            if (users[key].display_name.toLowerCase() === dn.toLowerCase()) { alert("Display Name already taken."); return; }
         }
 
-        const startR = {"Index":"Proselyte", "Ring":"Student", "Middle":"Little Brother", "Pinky":"Aspiring Star", "Thumb":"Soldato"}[org];
-        await set(ref(db, `users/${un}`), { 
+        const startR = {"Index":"Proselyte", "Ring":"Student", "Middle":"Little Sibling", "Pinky":"Aspiring Star", "Thumb":"Soldato"}[org];
+        const newUser = { 
             display_name: dn, 
             password: pw, 
             finger: org, 
             rank: startR, 
-            promotion_history: [`Initiated as ${startR}`] 
-        });
-        
+            promotion_history: [`Initiated as ${startR}`], 
+            bio: "", 
+            pronouns: "They/Them", 
+            division: "" 
+        };
+        await set(ref(db, `users/${un}`), newUser);
         alert("Account Created."); 
-        closeAuth();
+        loginSession(un, newUser);
+        showProfile();
     };
 
-    document.getElementById('doLogout').onclick = () => location.reload();
-    document.getElementById('search-input').oninput = renderList;
+    document.getElementById('logout-btn').onclick = () => {
+        localStorage.removeItem('thumb_user');
+        window.location.reload();
+    };
 
+    window.openProfile = async (un) => {
+        const snap = await get(ref(db, `users/${un}`)); const user = snap.val(); user.username = un;
+        const theme = getColorTheme(user.finger); const modal = document.getElementById('profile-modal');
+        modal.style.display = 'flex'; modal.style.backgroundColor = theme.maj; modal.style.borderColor = theme.min; modal.style.color = theme.min;
+        document.getElementById('prof-name').innerText = user.display_name;
+        document.getElementById('prof-name-underline').style.backgroundColor = theme.min;
+        document.getElementById('prof-rank').innerText = `${user.rank} of the ${user.finger}`;
+        document.getElementById('prof-div').innerText = user.division || "No Division";
+        document.getElementById('prof-pronouns').innerText = user.pronouns || "No Pronouns Set";
+        document.getElementById('prof-bio').innerText = user.bio || "No biography provided.";
+        const imgBox = document.getElementById('prof-img-box'); imgBox.style.backgroundImage = user.image ? `url(${user.image})` : "none";
+        imgBox.innerHTML = user.image ? "" : `<div id="upload-placeholder">Upload Image</div>`;
+        imgBox.onclick = null;
+        if (currentUser && currentUser.username === un) {
+            attachEditor(user, "display_name", document.getElementById('prof-name'));
+            attachEditor(user, "bio", document.getElementById('prof-bio'));
+            attachEditor(user, "pronouns", document.getElementById('prof-pronouns'));
+            if(user.finger !== "Pinky") attachEditor(user, "division", document.getElementById('prof-div'));
+            imgBox.onclick = () => document.getElementById('image-upload-input').click();
+        }
+    };
+
+    document.getElementById('image-upload-input').onchange = (e) => {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader(); reader.onload = async (event) => {
+            const base64 = event.target.result;
+            if(currentUser) { await update(ref(db, `users/${currentUser.username}`), { image: base64 }); openProfile(currentUser.username); }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.loadManagement = () => {
+        closeAuth(); const body = document.getElementById('mgmt-body'); body.innerHTML = "";
+        const myW = getWeight(currentUser.rank);
+        allUsers.forEach(u => {
+            if (u.finger === currentUser.finger && getWeight(u.rank) < myW && u.username !== currentUser.username) {
+                const row = document.createElement('tr'); row.innerHTML = `<td>${u.display_name}</td><td>${u.rank}</td><td id="act-${u.username}"></td>`;
+                body.appendChild(row); const cell = document.getElementById(`act-${u.username}`);
+                const p = document.createElement('span'); p.className="action-btn"; p.innerText="Promote"; p.onclick=()=>window.changeRank(u,1); cell.appendChild(p);
+                const d = document.createElement('span'); d.className="action-btn"; d.innerText="Demote"; d.style.color="#ff4d4d"; d.onclick=()=>window.changeRank(u,-1); cell.appendChild(d);
+                if (myW >= 4) { const b = document.createElement('span'); b.className="action-btn"; b.innerText="BAN"; b.style.color="red"; b.onclick=()=>window.requestBan(u); cell.appendChild(b); }
+            }
+        });
+        document.getElementById('mgmt-panel').style.display = 'block';
+    };
+
+    document.getElementById('search-input').oninput = renderList;
+    window.closeAuth = () => { document.querySelectorAll('.auth-panel').forEach(p => p.style.display = 'none'); document.getElementById('fingers-menu').style.display = 'none'; };
+    window.showProfile = () => { closeAuth(); if(currentUser) openProfile(currentUser.username); };
+    document.getElementById('signup-trigger').onclick = () => { closeAuth(); document.getElementById('register-panel').style.display='block'; };
+    document.getElementById('login-trigger').onclick = () => { closeAuth(); document.getElementById('login-panel').style.display='block'; };
+    document.getElementById('close-profile').onclick = () => document.getElementById('profile-modal').style.display = 'none';
+    document.getElementById('fingers-trigger').onclick = (e) => { e.stopPropagation(); const m = document.getElementById('fingers-menu'); m.style.display = (m.style.display === 'grid' ? 'none' : 'grid'); };
 </script>
 </body>
 </html>
